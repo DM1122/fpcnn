@@ -7,7 +7,7 @@
 <img src="img/utat-logo.png" height="64">
 
 # FPCNN
-FINCH Predictive Coding Neural Network.
+FINCH Predictive Coder Neural Network.
 
 A full end-to-end implementation of the [CSNN](https://www.mdpi.com/2313-433X/6/6/38) state-of-the-art compression algorithm for hyperspectral image data.
 
