@@ -4,7 +4,7 @@
 ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/DM1122/fpcnn)
 ![GitHub Pipenv locked Python version](https://img.shields.io/github/pipenv/locked/python-version/DM1122/fpcnn)
 
-<img src="img/utat-logo.png" height="128">
+<img src="img/utat-logo.png" height="64">
 
 # FPCNN
 FINCH Predictive Coding Neural Network.
