@@ -4,7 +4,11 @@
 ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/DM1122/fpcnn)
 ![GitHub Pipenv locked Python version](https://img.shields.io/github/pipenv/locked/python-version/DM1122/fpcnn)
 
-# FPCNN
-FINCH Predictive Coding Neural Network. 
+<img src="img/utat-logo.png" height="128">
 
-A full end-to-end implementation of the CSNN state-of-the-art compression algorithm for hyperspectral image data.
+# FPCNN
+FINCH Predictive Coding Neural Network.
+
+A full end-to-end implementation of the [CSNN](https://www.mdpi.com/2313-433X/6/6/38) state-of-the-art compression algorithm for hyperspectral image data.
+
+<img src="img/csnn.png" height="256">
