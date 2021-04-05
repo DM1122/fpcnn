@@ -2,9 +2,7 @@
 
 # external
 import numpy as np
-
-# project
-from libs import mathlib, printlib
+from libs import mathlib
 
 
 def map_residuals(data):

@@ -161,15 +161,21 @@ def get_diff(A, B):
     return diffs
 
 
-
-
 def get_compression_factor(A, B):
+    """Compute the compression factor between two arrays.
+
+    Args:
+        A (ndarray): Original array
+        B (ndarray): Compressed array
+
+    TODO:
+        Return compression factor instead of printing
+    """
     assert type(A) == np.ndarray, f"Array is not ndarray (A:{type(A)})"
     assert type(B) == np.ndarray, f"Array is not ndarray (B:{type(B)})"
 
-
-    bpv_A = A.nbytes*8 / A.size
-    bpv_B = B.nbytes*8 / A.size
+    bpv_A = A.nbytes * 8 / A.size
+    bpv_B = B.size / A.size
 
     cf = bpv_A / bpv_B
 
@@ -177,7 +183,6 @@ def get_compression_factor(A, B):
     print(f"BPV (A):\t{bpv_A}")
     print(f"BPV (B):\t{bpv_B}")
     print(f"CF:\t{cf}")
-
 
 
 def print_error(A, B, title=""):

@@ -28,7 +28,9 @@ def plot_datacube(data, band=0, title="Datacube"):
     )
 
 
-def plot_traces(traces, names=["trace"], title="Traces", xtitle="x", ytitle="y", dark=False):
+def plot_traces(
+    traces, names=["trace"], title="Traces", xtitle="x", ytitle="y", dark=False
+):
     """Plot one or more sequences.
 
     Args:
@@ -86,6 +88,7 @@ def plot_distribution(data, title="Distribution", dark=False):
     )
     fig.show()
 
+
 def plot_band(data, band, title):
     """Draw a specific band of a datcube.
 
@@ -94,4 +97,13 @@ def plot_band(data, band, title):
         band (int): band selection
         title (str): title
     """
-    spectral.imshow(data=data, bands=(band,), classes=None, source=None, colors=None, figsize=None, fignum=None, title=title)
+    spectral.imshow(
+        data=data,
+        bands=(band,),
+        classes=None,
+        source=None,
+        colors=None,
+        figsize=None,
+        fignum=None,
+        title=title,
+    )

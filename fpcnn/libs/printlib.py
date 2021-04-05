@@ -1,9 +1,9 @@
 """Printing utilities."""
 
+# external
 import numpy as np
-import progress
 import progress.spinner
-# from progress.spinner import PieSpinner
+from progress.bar import Bar
 
 
 def print_ndarray_stats(array, title=""):
@@ -13,7 +13,6 @@ def print_ndarray_stats(array, title=""):
         array (ndarray): Data array
         title (str, optional): Title. Defaults to None.
     """
-    # title = "" if title is None else title
     print(f"Ndarray Stats: {title}")
     print(f"Shape:\t{array.shape}")
     print(f"Size:\t{array.size}")
@@ -29,18 +28,25 @@ def print_ndarray_stats(array, title=""):
     print()
 
 
+class ProgressBar(Bar):
+    """Custom progressbar class."""
 
-class ProgressBar(progress.bar.Bar):
-    suffix = "%(index)d/%(max)d (%(percent)d%%) - %(freq)d it/s - %(elapsed)ds:%(total)ds"
+    suffix = (
+        "%(index)d/%(max)d (%(percent)d%%) - %(freq)d it/s - %(elapsed)ds:%(total)ds"
+    )
 
     @property
     def total(self):
+        """Progress bar total remaining time property."""
         return self.elapsed + self.eta
-    
+
     @property
     def freq(self):
+        """Progress bar frequency property."""
         return 1 / self.avg
 
 
 class ProgressSpinner(progress.spinner.PieSpinner):
+    """Custom progress spinner class."""
+
     suffix = "%(freq)d it/s - %(elapsed)ds"

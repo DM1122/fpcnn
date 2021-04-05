@@ -1,7 +1,9 @@
 """Utilities to load hyperspectral image data."""
 
-import scipy.io
+# external
 import h5py
+import scipy.io
+
 
 def load_data_hdf5(path, header):
     """Load hyperspectral image data from hdf5 files.

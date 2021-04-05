@@ -22,7 +22,7 @@ class FPCNN:
         self.offsets_spatial = offsets_spatial
         self.offsets_spectral = offsets_spectral
 
-        self.model = self.__instantiate_model()
+        self.model, self.optimizer, self.losser = self.__instantiate_model()
 
     def __instantiate_model(self):
         """Compile model according to architecture.
@@ -112,21 +112,21 @@ class FPCNN:
         optimizer.iterations
         optimizer.decay = tf.Variable(0.0)
 
-        loss_func = tf.keras.losses.MeanSquaredError(name="mean_squared_error")
+        losser = tf.keras.losses.MeanSquaredError(name="mean_squared_error")
 
-        metric = tf.keras.metrics.Accuracy(name="accuracy", dtype=None)
+        metrics = ["accuracy"]
 
         model.compile(
             optimizer=optimizer,
-            loss=loss_func,
-            metrics=metric,
+            loss=losser,
+            metrics=metrics,
             loss_weights=None,
             weighted_metrics=None,
             run_eagerly=None,
             steps_per_execution=None,
         )
 
-        return model
+        return model, optimizer, losser
 
     def __validate_offsets(self, offsets):
         """Check to make sure offset selection does not access unseen voxels.
@@ -191,12 +191,12 @@ class FPCNN:
 
         Returns:
             output (ndarray): prediction residuals
-            losses (list): list of losses during model adaptation
+            losses (ndarray): array of losses captured during model adaptation
         """
         output = np.zeros(shape=data.shape, dtype="int16", order="C")
         losses = []
 
-        n = data.shape[0]*data.shape[1]*data.shape[2]
+        n = data.shape[0] * data.shape[1] * data.shape[2]
         bar = printlib.ProgressBar(message="Predictive encoding", max=n)
         for k in range(data.shape[2]):
             for j in range(data.shape[1]):
@@ -205,7 +205,6 @@ class FPCNN:
 
                     # get label
                     label = data[index].item()
-                    label_shaped = np.expand_dims(np.array(label), axis=0)
 
                     # get context
                     context_spatial = self.__get_context(
@@ -215,56 +214,37 @@ class FPCNN:
                         data=data, index=index, offsets=self.offsets_spectral
                     )
 
-                    # get prediction
-                    pred = self.model.predict(
-                        x={
-                            "Spatial_Context": context_spatial,
-                            "Spectral_Context": context_spectral,
-                        },
-                        batch_size=None,
-                        verbose=0,
-                        steps=None,
-                        callbacks=None,
-                        max_queue_size=10,
-                        workers=1,
-                        use_multiprocessing=False,
-                    )
-                    pred = pred.squeeze()
-                    pred = np.round(pred)  # might want to round ceil or flooe?
-                    pred = pred.item()
+                    with tf.GradientTape() as tape:
+                        # get prediction
+                        pred = self.model(
+                            {
+                                "Spatial_Context": context_spatial,
+                                "Spectral_Context": context_spectral,
+                            }
+                        )
+
+                        # get loss
+                        loss = self.losser(y_true=label, y_pred=pred)
+
+                    losses.append(loss.numpy().item())
 
                     # get error
-                    error = label - pred  # confirm rounding
+                    pred_rounded = round(
+                        pred.numpy().item()
+                    )  # might want to round ceil or floor? Rounding is non-differentiable, so rounding does not occur inside the tape
+                    error = label - pred_rounded
                     output[index] = error
 
-                    # adapt model
-                    metrics = self.model.fit(
-                        x={
-                            "Spatial_Context": context_spatial,
-                            "Spectral_Context": context_spectral,
-                        },
-                        y=label_shaped,
-                        batch_size=None,
-                        epochs=1,
-                        verbose=0,
-                        callbacks=None,
-                        validation_split=0.0,
-                        validation_data=None,
-                        shuffle=False,
-                        class_weight=None,
-                        sample_weight=None,
-                        initial_epoch=0,
-                        steps_per_epoch=None,
-                        validation_steps=None,
-                        validation_batch_size=None,
-                        validation_freq=1,
-                        max_queue_size=10,
-                        workers=1,
-                        use_multiprocessing=False,
+                    # compute gradients and update weights
+                    grads = tape.gradient(loss, self.model.trainable_variables)
+                    self.optimizer.apply_gradients(
+                        grads_and_vars=zip(grads, self.model.trainable_variables),
+                        name=None,
+                        experimental_aggregate_gradients=True,
                     )
-                    losses.append(metrics.history["loss"][0])
+
                     bar.next()
-        bar.finish()   
+        bar.finish()
 
         losses = np.array(losses)
 
@@ -278,12 +258,12 @@ class FPCNN:
 
         Returns:
             output (ndarray): reconstruction of original datacube
-            losses (list): list of losses during model adaptation
+            losses (ndarray): array of losses captured during model adaptation
         """
         output = np.zeros(shape=data.shape, dtype="uint16", order="C")
         losses = []
 
-        n = data.shape[0]*data.shape[1]*data.shape[2]
+        n = data.shape[0] * data.shape[1] * data.shape[2]
         bar = printlib.ProgressBar(message="Predictive decoding", max=n)
         for k in range(data.shape[2]):
             for j in range(data.shape[1]):
@@ -301,55 +281,33 @@ class FPCNN:
                         data=output, index=index, offsets=self.offsets_spectral
                     )
 
-                    # get prediction
-                    pred = self.model.predict(
-                        x={
-                            "Spatial_Context": context_spatial,
-                            "Spectral_Context": context_spectral,
-                        },
-                        batch_size=None,  # should be none or one
-                        verbose=0,
-                        steps=None,
-                        callbacks=None,
-                        max_queue_size=10,
-                        workers=1,
-                        use_multiprocessing=False,
-                    )
-                    pred = pred.squeeze()  # remove when switching to batches (?)
-                    pred = pred.item()  # try to print the pred, might be overflor
-                    pred = round(pred)
+                    with tf.GradientTape() as tape:
+                        # get prediction
+                        pred = self.model(
+                            {
+                                "Spatial_Context": context_spatial,
+                                "Spectral_Context": context_spectral,
+                            }
+                        )
+                        pred_rounded = round(pred.numpy().item())
 
-                    # get label
-                    label = pred + error
-                    label_shaped = np.expand_dims(np.array(label), axis=0)
+                        # get label
+                        label = pred_rounded + error
+
+                        # get loss
+                        loss = self.losser(y_true=label, y_pred=pred)
+
                     output[index] = label
+                    losses.append(loss.numpy().item())
 
-                    # adapt model
-                    metrics = self.model.fit(
-                        x={
-                            "Spatial_Context": context_spatial,
-                            "Spectral_Context": context_spectral,
-                        },
-                        y=label_shaped,
-                        batch_size=None,  # should be none or 1?
-                        epochs=1,
-                        verbose=0,
-                        callbacks=None,
-                        validation_split=0.0,
-                        validation_data=None,
-                        shuffle=False,
-                        class_weight=None,
-                        sample_weight=None,
-                        initial_epoch=0,
-                        steps_per_epoch=None,
-                        validation_steps=None,
-                        validation_batch_size=None,
-                        validation_freq=1,
-                        max_queue_size=10,
-                        workers=1,
-                        use_multiprocessing=False,
+                    # compute gradients and update weights
+                    grads = tape.gradient(loss, self.model.trainable_variables)
+                    self.optimizer.apply_gradients(
+                        grads_and_vars=zip(grads, self.model.trainable_variables),
+                        name=None,
+                        experimental_aggregate_gradients=True,
                     )
-                    losses.append(metrics.history["loss"][0])
+
                     bar.next()
         bar.finish()
 
