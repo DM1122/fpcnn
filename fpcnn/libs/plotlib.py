@@ -8,56 +8,183 @@ import plotly.graph_objects as go
 import spectral
 
 
-def plot_datacube(data, band=0, title="Datacube"):
-    """Plot datacube band.
-
-    Args:
-        data (ndarray): 3D data array
-        band (int): band selection
-        title (str): plot title
-    """
-    spectral.imshow(
-        data=data,
-        bands=(band,),
-        classes=None,
-        source=None,
-        colors=None,
-        figsize=None,
-        fignum=None,
-        title=title,
-    )
-
-
 def plot_traces(
-    traces, names=["trace"], title="Traces", xtitle="x", ytitle="y", dark=False
+    df,
+    title,
+    traces,
+    indicies=None,
+    x_errors=None,
+    y_errors=None,
+    title_x="x",
+    title_y="y",
+    size=None,
+    draw_mode="lines+markers",
+    vlines=None,
+    hlines=None,
+    dark_mode=False,
 ):
-    """Plot one or more sequences.
+    """Plots traces.
 
     Args:
-        traces (list{ndarray}): List of ndarrays containing sequences
-        names (list{str}): List of strings with trace names
-        title (str, optional): Plot title. Defaults to "Traces".
-        xtitle (str, optional): X-axis title. Defaults to "x".
-        ytitle (str, optional): Y-axis title Defaults to "y".
-        dark (bool, optional): Dark mode. Defaults to False.
+        df (pandas.core.DataFrame): Pandas dataframe
+        title (str): Plot title
+        traces (list[str]): Column names of traces to graph
+        indicies (list[str], optional): Column names of indicies for trace to use. Defaults to None.
+        x_errors (str, optional): Column name of x-errors. Defaults to None.
+        y_errors ([type], optional): Column name of y-errors. Defaults to None.
+        title_x (str, optional): X-axis title. Defaults to "x".
+        title_y (str, optional): Y-axis title. Defaults to "y".
+        size (tuple, optional): Width and height of plot in pixels. Defaults to None.
+        draw_mode (str, optional): Whether to render lines or markers or both. Defaults to "lines+markers".
+        vlines (list[int], optional): List of ordinates for vertical lines. Defaults to None.
+        hlines (list[int], optional): List of ordinates for horizontal lines. Defaults to None.
+        dark_mode (bool, optional): Dark mode. Defaults to False.
     """
     fig = go.Figure()
 
+    template = "plotly" if not dark_mode else "plotly_dark"
+
+    assert (
+        type(df) == pd.core.frame.DataFrame
+    ), f"Array is not pandas dataframe (df:{type(df)})"
+
+    # draw traces
     for i in range(len(traces)):
-        trace = traces[i].flatten() if traces[i].ndim != 1 else traces[i]
+        name = traces[i]
+        y = df[traces[i]]
+        index = (
+            df[indicies[i]] if indicies is not None else df.index
+        )  # cannot have one trace use df.index and others not. WIP
+        x_error = df[x_errors[i]] if x_errors is not None else None
+        y_error = df[y_errors[i]] if y_errors is not None else None
+
+        # error bars
+        x_error = dict(
+            type="data",
+            symmetric=True,
+            array=x_error,
+            # color="black",
+            # thickness=1.5,
+            # width=3
+        )
+
+        y_error = dict(
+            type="data",
+            symmetric=True,
+            array=y_error,
+            # color="black",
+            # thickness=1.5,
+            # width=3
+        )
+
         fig.add_trace(
             go.Scatter(
-                x=list(range(len(trace))), y=trace, mode="lines+markers", name=names[i]
+                arg=None,
+                cliponaxis=None,
+                connectgaps=False,
+                customdata=None,
+                customdatasrc=None,
+                dx=None,
+                dy=None,
+                error_x=x_error,
+                error_y=y_error,
+                fill=None,
+                fillcolor=None,
+                groupnorm=None,
+                hoverinfo=None,
+                hoverinfosrc=None,
+                hoverlabel=None,
+                hoveron=None,
+                hovertemplate=None,
+                hovertemplatesrc=None,
+                hovertext=None,
+                hovertextsrc=None,
+                ids=None,
+                idssrc=None,
+                legendgroup=None,
+                line=None,
+                marker=None,
+                meta=None,
+                metasrc=None,
+                mode=draw_mode,
+                name=name,
+                opacity=None,
+                orientation=None,
+                r=None,
+                rsrc=None,
+                selected=None,
+                selectedpoints=None,
+                showlegend=True,
+                stackgaps=None,
+                stackgroup=None,
+                stream=None,
+                t=None,
+                text=None,
+                textfont=None,
+                textposition=None,
+                textpositionsrc=None,
+                textsrc=None,
+                texttemplate=None,
+                texttemplatesrc=None,
+                tsrc=None,
+                uid=None,
+                uirevision=None,
+                unselected=None,
+                visible=None,
+                x=index,
+                x0=None,
+                xaxis=None,
+                xcalendar=None,
+                xsrc=None,
+                y=y,
+                y0=None,
+                yaxis=None,
+                ycalendar=None,
+                ysrc=None,
             )
         )
 
-    template = "plotly" if not dark else "plotly_dark"
+    # draw vertical lines
+    if vlines is not None:
+        for vline in vlines:
+            fig.add_shape(
+                type="line",
+                xref="x",
+                yref="paper",
+                x0=vline,
+                y0=0,
+                x1=vline,
+                y1=1,
+                line=dict(color="black", width=2, dash="dash"),
+            )
+
+    # draw horizontal lines
+    if hlines is not None:
+        for hline in hlines:
+            fig.add_shape(
+                type="line",
+                xref="paper",
+                yref="y",
+                x0=0,
+                y0=hline,
+                x1=1,
+                y1=hline,
+                line=dict(color="black", width=2, dash="dash"),
+            )
+
+    # config plot
+    w = size[0] if size is not None else None
+    h = size[1] if size is not None else None
+
     fig.update_layout(
         title=title,
-        xaxis_title=xtitle,
-        yaxis_title=ytitle,
+        width=w,
+        height=h,
+        xaxis_title=title_x,
+        yaxis_title=title_y,
         template=template,
     )
+
     fig.show()
 
 
