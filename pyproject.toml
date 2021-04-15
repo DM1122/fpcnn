@@ -54,7 +54,7 @@ line-length = 88
 format = "colored"
 max_line_length = 88
 show_source = true
-exclude = ["notebooks"]
+exclude = ["*.ipynb"]
 
 [tool.flakehell.plugins]
 flake8-blind-except = ["+*"]
