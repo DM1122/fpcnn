@@ -2,7 +2,9 @@
 
 # external
 import numpy as np
-from libs import mathlib
+
+# project
+from fpcnn.libs import mathlib
 
 
 def map_residuals(data):
@@ -14,7 +16,6 @@ def map_residuals(data):
     Returns:
         output (ndarray): Mapped values
     """
-    assert type(data) == np.ndarray, f"Array is not a numpy array ({type(data)})"
     assert data.ndim == 1, f"Array does not have ndim=1 ({data.ndim})"
 
     n = data.size
@@ -127,7 +128,6 @@ def remap_residuals(data):
     Returns:
         output (ndarray): Remapped values
     """
-    assert type(data) == np.ndarray, f"Array is not a numpy array ({type(data)})"
     assert data.ndim == 1, f"Array does not have ndim=1 ({data.ndim})"
 
     n = data.size

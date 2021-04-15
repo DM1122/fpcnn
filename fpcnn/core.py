@@ -1,9 +1,11 @@
-"""FINCH Predictive Coder Neural Network."""
+"""FINCH Predictive Coder Neural Network core class."""
 
 # external
 import numpy as np
 import tensorflow as tf
-from libs import printlib
+
+# project
+from fpcnn.libs import printlib
 
 
 class FPCNN:
@@ -109,7 +111,7 @@ class FPCNN:
             amsgrad=False,
             name="Adam",
         )  # https://gist.github.com/yoshihikoueno/4ff0694339f88d579bb3d9b07e609122
-        optimizer.iterations
+        optimizer.iterations  # this access will invoke optimizer._iterations method and create optimizer.iter attribute
         optimizer.decay = tf.Variable(0.0)
 
         losser = tf.keras.losses.MeanSquaredError(name="mean_squared_error")
@@ -128,7 +130,8 @@ class FPCNN:
 
         return model, optimizer, losser
 
-    def __validate_offsets(self, offsets):
+    @staticmethod
+    def __validate_offsets(offsets):
         """Check to make sure offset selection does not access unseen voxels.
 
         Args:
@@ -145,7 +148,8 @@ class FPCNN:
                     f"Offset {offset} is invalid. Attempted to access future voxel."
                 )
 
-    def __get_context(self, data, index, offsets):
+    @staticmethod
+    def __get_context(data, index, offsets):
         """Get current voxel context.
 
         Args:

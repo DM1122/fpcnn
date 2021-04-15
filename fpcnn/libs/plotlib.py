@@ -1,7 +1,6 @@
 """Plotting utilities."""
 
 # external
-import numpy as np
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
@@ -23,7 +22,7 @@ def plot_traces(
     hlines=None,
     dark_mode=False,
 ):
-    """Plots traces.
+    """Plot traces.
 
     Args:
         df (pandas.core.DataFrame): Pandas dataframe
@@ -44,10 +43,6 @@ def plot_traces(
 
     template = "plotly" if not dark_mode else "plotly_dark"
 
-    assert (
-        type(df) == pd.core.frame.DataFrame
-    ), f"Array is not pandas dataframe (df:{type(df)})"
-
     # draw traces
     for i in range(len(traces)):
         name = traces[i]
@@ -59,23 +54,23 @@ def plot_traces(
         y_error = df[y_errors[i]] if y_errors is not None else None
 
         # error bars
-        x_error = dict(
-            type="data",
-            symmetric=True,
-            array=x_error,
-            # color="black",
-            # thickness=1.5,
-            # width=3
-        )
+        x_error = {
+            "type": "data",
+            "symmetric": True,
+            "array": x_error,
+            # "color":"black",
+            # "thickness":1.5,
+            # "width":3
+        }
 
-        y_error = dict(
-            type="data",
-            symmetric=True,
-            array=y_error,
-            # color="black",
-            # thickness=1.5,
-            # width=3
-        )
+        y_error = {
+            "type": "data",
+            "symmetric": True,
+            "array": y_error,
+            # "color":"black",
+            # "thickness":1.5,
+            # "width":3
+        }
 
         fig.add_trace(
             go.Scatter(
@@ -155,7 +150,7 @@ def plot_traces(
                 y0=0,
                 x1=vline,
                 y1=1,
-                line=dict(color="black", width=2, dash="dash"),
+                line={"color": "black", "width": 2, "dash": "dash"},
             )
 
     # draw horizontal lines
@@ -169,7 +164,7 @@ def plot_traces(
                 y0=hline,
                 x1=1,
                 y1=hline,
-                line=dict(color="black", width=2, dash="dash"),
+                line={"color": "black", "width": 2, "dash": "dash"},
             )
 
     # config plot
@@ -196,8 +191,6 @@ def plot_distribution(data, title="Distribution", dark=False):
         title (str, optional): Plot title. Defaults to "Distribution".
         dark (bool, optional): Plot dark mode. Defaults to False.
     """
-    assert type(data) == np.ndarray, f"Array is not numpy array, (data:{type(data)})"
-
     data_seq = data.flatten() if data.ndim != 1 else data
 
     template = "plotly" if not dark else "plotly_dark"

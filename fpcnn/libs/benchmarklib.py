@@ -15,8 +15,6 @@ def get_acc(A, B):
     Returns:
         acc (float): percentage accuracy
     """
-    assert type(A) == np.ndarray, f"Array is not ndarray (A:{type(A)})"
-    assert type(B) == np.ndarray, f"Array is not ndarray (B:{type(B)})"
     assert A.size == B.size, f"Mistmatched array sizes (A:{A.size}, B:{B.size})"
     assert A.ndim == 1, f"Array dim is not 1 (A:{A.ndim})"
     assert B.ndim == 1, f"Array dim is not 1 (B:{B.ndim})"
@@ -31,7 +29,7 @@ def get_acc(A, B):
         if a == b:
             score += 1
 
-    acc = (score / n) * 100
+    acc = score / n
 
     return acc
 
@@ -47,8 +45,6 @@ def get_mae(A, B):
     Returns:
         mae (float): mean absolute error
     """
-    assert type(A) == np.ndarray, f"Array is not ndarray (A:{type(A)})"
-    assert type(B) == np.ndarray, f"Array is not ndarray (B:{type(B)})"
     assert A.size == B.size, f"Mistmatched array sizes (A:{A.size}, B:{B.size})"
     assert A.ndim == 1, f"Array dim is not 1 (A:{A.ndim})"
     assert B.ndim == 1, f"Array dim is not 1 (B:{B.ndim})"
@@ -79,8 +75,6 @@ def get_msae(A, B):
     Returns:
         msae (float): mean squared absolute error
     """
-    assert type(A) == np.ndarray, f"Array is not ndarray (A:{type(A)})"
-    assert type(B) == np.ndarray, f"Array is not ndarray (B:{type(B)})"
     assert A.size == B.size, f"Mistmatched array sizes (A:{A.size}, B:{B.size})"
     assert A.ndim == 1, f"Array dim is not 1 (A:{A.ndim})"
     assert B.ndim == 1, f"Array dim is not 1 (B:{B.ndim})"
@@ -111,8 +105,6 @@ def get_mape(A, B):
     Returns:
         mape (float): mean squared absolute percentage error
     """
-    assert type(A) == np.ndarray, f"Array is not ndarray (A:{type(A)})"
-    assert type(B) == np.ndarray, f"Array is not ndarray (B:{type(B)})"
     assert A.size == B.size, f"Mistmatched array sizes (A:{A.size}, B:{B.size})"
     assert A.ndim == 1, f"Array dim is not 1 (A:{A.ndim})"
     assert B.ndim == 1, f"Array dim is not 1 (B:{B.ndim})"
@@ -142,8 +134,6 @@ def get_diff(A, B):
     Returns:
         errors (list): list containing difference sequence
     """
-    assert type(A) == np.ndarray, f"Array is not ndarray (A:{type(A)})"
-    assert type(B) == np.ndarray, f"Array is not ndarray (B:{type(B)})"
     assert A.size == B.size, f"Mistmatched array sizes (A:{A.size}, B:{B.size})"
     assert A.ndim == 1, f"Array dim is not 1 (A:{A.ndim})"
     assert B.ndim == 1, f"Array dim is not 1 (B:{B.ndim})"
@@ -171,9 +161,6 @@ def get_compression_factor(A, B):
     TODO:
         Return compression factor instead of printing
     """
-    assert type(A) == np.ndarray, f"Array is not ndarray (A:{type(A)})"
-    assert type(B) == np.ndarray, f"Array is not ndarray (B:{type(B)})"
-
     bpv_A = A.nbytes * 8 / A.size
     bpv_B = B.size / A.size
 
@@ -198,7 +185,7 @@ def print_error(A, B, title=""):
     mape = get_mape(A=A, B=B)
 
     print(f"Error Measures: {title}")
-    print(f"ACC:\t{acc}%")
+    print(f"ACC:\t{acc*100}%")
     print(f"MAE:\t{mae}")
     print(f"MSAE:\t{msae}")
     print(f"MAPE:\t{mape}%")

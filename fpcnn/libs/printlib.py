@@ -24,7 +24,10 @@ def print_ndarray_stats(array, title=""):
     print(f"Median:\t{round(np.median(array),2)}")
     print(f"σ:\t{round(array.std(),2)}")
     print(f"σ²:\t{round(array.var(),2)}")
-    print(f"{array[:5]}...{array[-5:]}") if array.ndim == 1 else None
+
+    if array.ndim == 1:
+        print(f"{array[:5]}...{array[-5:]}")
+
     print()
 
 

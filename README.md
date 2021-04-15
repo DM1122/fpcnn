@@ -52,6 +52,14 @@ A successful commit therefore requires satisfying the syntactic rules put forth 
 * improve readme
 * prototyping notebooks (once google collab python version updates to 3.8)
 * hyperparameter optimization toolkit
+* discuss how to run isort, black, linter manually when pre-commit fails
+* add about testing section. html pytest
+
+
+isort . 
+black .
+flakehell lint
+from the root directory
 
 
 
