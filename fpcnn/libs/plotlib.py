@@ -1,13 +1,13 @@
 """Plotting utilities."""
 
 # external
-import pandas as pd
+import plotly as plt
 import plotly.express as px
 import plotly.graph_objects as go
 import spectral
 
 
-def plot_traces(
+def plot_series(
     df,
     title,
     traces,
@@ -22,7 +22,7 @@ def plot_traces(
     hlines=None,
     dark_mode=False,
 ):
-    """Plot traces.
+    """Plot series.
 
     Args:
         df (pandas.core.DataFrame): Pandas dataframe
@@ -183,29 +183,273 @@ def plot_traces(
     fig.show()
 
 
-def plot_distribution(data, title="Distribution", dark=False):
-    """Plot numerical distribution of array data.
+def plot_dist(
+    df,
+    title,
+    traces,
+    nbins=None,
+    x_errors=None,
+    y_errors=None,
+    title_x="x",
+    title_y="y",
+    size=None,
+    vlines=None,
+    hlines=None,
+    dark_mode=False,
+):
+    """Plot distribution.
 
     Args:
-        data (ndarray): data
-        title (str, optional): Plot title. Defaults to "Distribution".
-        dark (bool, optional): Plot dark mode. Defaults to False.
+        df (pandas.core.DataFrame): Pandas dataframe.
+        title (str): Plot title.
+        traces (list[str]): Column names of traces to graph.
+        nbins (int): Number of bins for histogram along x-axis.
+        x_errors (str, optional): Column name of x-errors. Defaults to None.
+        y_errors ([type], optional): Column name of y-errors. Defaults to None.
+        title_x (str, optional): X-axis title. Defaults to "x".
+        title_y (str, optional): Y-axis title. Defaults to "y".
+        size (tuple, optional): Width and height of plot in pixels. Defaults to None.
+        draw_mode (str, optional): Whether to render lines or markers or both. Defaults to "lines+markers".
+        vlines (list[int], optional): List of ordinates for vertical lines. Defaults to None.
+        hlines (list[int], optional): List of ordinates for horizontal lines. Defaults to None.
+        dark_mode (bool, optional): Dark mode. Defaults to False.
     """
-    data_seq = data.flatten() if data.ndim != 1 else data
+    fig = go.Figure()
+    fig = plt.subplots.make_subplots(
+        rows=2,
+        cols=1,
+        shared_xaxes=True,
+        shared_yaxes=False,
+        start_cell="top-left",
+        print_grid=False,
+        horizontal_spacing=None,
+        vertical_spacing=0.025,
+        subplot_titles=None,
+        column_widths=None,
+        row_heights=[0.2, 0.8],
+        specs=None,
+        insets=None,
+        column_titles=None,
+        row_titles=None,
+        x_title=title_x,
+        y_title=title_y,
+        figure=fig,
+    )
 
-    template = "plotly" if not dark else "plotly_dark"
-    df = pd.DataFrame(
-        data=data_seq, index=None, columns=["data"], dtype=None, copy=False
-    )
-    fig = px.histogram(
-        df,
-        x="data",
-        marginal="violin",
-        hover_data=df.columns,
-        nbins=100,
+    template = "plotly" if not dark_mode else "plotly_dark"
+    opacity = 1.0 if len(traces) == 1 else 0.75
+
+    # draw traces
+    for i in range(len(traces)):
+        name = traces[i]
+        x = df[traces[i]]
+        x_error = df[x_errors[i]] if x_errors is not None else None
+        y_error = df[y_errors[i]] if y_errors is not None else None
+
+        # error bars
+        x_error = {
+            "type": "data",
+            "symmetric": True,
+            "array": x_error,
+            # "color":"black",
+            # "thickness":1.5,
+            # "width":3
+        }
+
+        y_error = {
+            "type": "data",
+            "symmetric": True,
+            "array": y_error,
+            # "color":"black",
+            # "thickness":1.5,
+            # "width":3
+        }
+
+        fig.add_trace(
+            go.Histogram(
+                arg=None,
+                alignmentgroup=None,
+                bingroup=None,
+                cumulative=None,
+                customdata=None,
+                customdatasrc=None,
+                error_x=x_error,
+                error_y=y_error,
+                histfunc="count",
+                histnorm=None,
+                hoverinfo=None,
+                hoverinfosrc=None,
+                hoverlabel=None,
+                hovertemplate=None,
+                hovertemplatesrc=None,
+                hovertext=None,
+                hovertextsrc=None,
+                ids=None,
+                idssrc=None,
+                legendgroup=i,
+                marker=None,
+                marker_color=px.colors.qualitative.Plotly[i],
+                meta=None,
+                metasrc=None,
+                name=name,
+                nbinsx=nbins,
+                nbinsy=None,
+                offsetgroup=None,
+                opacity=opacity,
+                orientation="v",
+                selected=None,
+                selectedpoints=None,
+                showlegend=True,
+                stream=None,
+                text=None,
+                textsrc=None,
+                uid=None,
+                uirevision=None,
+                unselected=None,
+                visible=None,
+                x=x,
+                xaxis=None,
+                xbins=None,
+                xcalendar=None,
+                xsrc=None,
+                y=None,
+                yaxis=None,
+                ybins=None,
+                ycalendar=None,
+                ysrc=None,
+            ),
+            row=2,
+            col=1,
+        )
+
+        # draw marginals
+        fig.add_trace(
+            go.Box(
+                alignmentgroup=None,
+                boxmean=None,
+                boxpoints="all",
+                customdata=None,
+                customdatasrc=None,
+                dx=None,
+                dy=None,
+                fillcolor=None,
+                hoverinfo=None,
+                hoverinfosrc=None,
+                hoverlabel=None,
+                hoveron=None,
+                hovertemplate=None,
+                hovertemplatesrc=None,
+                hovertext=None,
+                hovertextsrc=None,
+                ids=None,
+                idssrc=None,
+                jitter=0,
+                legendgroup=i,
+                line=None,
+                line_color=px.colors.qualitative.Plotly[i],
+                lowerfence=None,
+                lowerfencesrc=None,
+                marker=None,
+                marker_symbol="line-ns-open",
+                mean=None,
+                meansrc=None,
+                median=None,
+                mediansrc=None,
+                meta=None,
+                metasrc=None,
+                name=name,
+                notched=True,
+                notchspan=None,
+                notchspansrc=None,
+                notchwidth=None,
+                offsetgroup=None,
+                opacity=None,
+                orientation=None,
+                pointpos=None,
+                q1=None,
+                q1src=None,
+                q3=None,
+                q3src=None,
+                quartilemethod=None,
+                sd=None,
+                sdsrc=None,
+                selected=None,
+                selectedpoints=None,
+                showlegend=False,
+                stream=None,
+                text=None,
+                textsrc=None,
+                uid=None,
+                uirevision=None,
+                unselected=None,
+                upperfence=None,
+                upperfencesrc=None,
+                visible=None,
+                whiskerwidth=None,
+                width=None,
+                x=x,
+                x0=None,
+                xaxis=None,
+                xcalendar=None,
+                xperiod=None,
+                xperiod0=None,
+                xperiodalignment=None,
+                xsrc=None,
+                y=None,
+                y0=None,
+                yaxis=None,
+                ycalendar=None,
+                yperiod=None,
+                yperiod0=None,
+                yperiodalignment=None,
+                ysrc=None,
+            ),
+            row=1,
+            col=1,
+        )
+
+    # draw vertical lines
+    if vlines is not None:
+        for vline in vlines:
+            fig.add_shape(
+                type="line",
+                xref="x",
+                yref="paper",
+                x0=vline,
+                y0=0,
+                x1=vline,
+                y1=1,
+                line={"color": "black", "width": 2, "dash": "dash"},
+            )
+
+    # draw horizontal lines
+    if hlines is not None:
+        for hline in hlines:
+            fig.add_shape(
+                type="line",
+                xref="paper",
+                yref="y",
+                x0=0,
+                y0=hline,
+                x1=1,
+                y1=hline,
+                line={"color": "black", "width": 2, "dash": "dash"},
+            )
+
+    # config plot
+    w = size[0] if size is not None else None
+    h = size[1] if size is not None else None
+
+    fig.update_layout(
         title=title,
+        width=w,
+        height=h,
+        # xaxis_title=title_x,
+        # yaxis_title=title_y,
         template=template,
+        barmode="overlay",
     )
+
     fig.show()
 
 
@@ -227,3 +471,15 @@ def plot_band(data, band, title):
         fignum=None,
         title=title,
     )
+
+    # x=x,
+    # marker_symbol="line-ns-open",
+    # marker_color=None,
+    # boxpoints="all",
+    # jitter=0,
+    # fillcolor=px.colors.qualitative.Plotly[i],
+    # line_color=px.colors.qualitative.Plotly[i],
+    # hoveron="points",
+    # legendgroup=i,
+    # showlegend=False,
+    # name=name,

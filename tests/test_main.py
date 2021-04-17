@@ -5,6 +5,7 @@ import random
 
 # external
 import numpy as np
+import pytest
 import tensorflow as tf
 
 # project
@@ -12,6 +13,7 @@ from fpcnn import core, pipe
 from fpcnn.libs import benchmarklib, datalib
 
 
+@pytest.mark.slow
 def test_main():
     """Test entire FPCNN framework."""
     # region config

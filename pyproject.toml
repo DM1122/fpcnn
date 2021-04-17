@@ -76,3 +76,7 @@ pylint = ["+*", "-C0103", "-R0913", "-R0914", "-C0104", "-C0301", "-W0104", "-E8
 [tool.pytest.ini_options]
 addopts = "--html=logs/pytest-report.html --self-contained-html" 
 testpaths = ["tests"]
+markers = [
+    "slow: tests that are slow to run (deselect with '-m \"not slow\"').",
+    "plot: test that produce plots."
+]
