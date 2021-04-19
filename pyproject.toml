@@ -78,5 +78,5 @@ addopts = "--html=logs/pytest-report.html --self-contained-html"
 testpaths = ["tests"]
 markers = [
     "slow: tests that are slow to run (deselect with '-m \"not slow\"').",
-    "plot: test that produce plots."
+    "plot: tests that produce plots."
 ]

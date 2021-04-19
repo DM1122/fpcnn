@@ -269,7 +269,7 @@ def plot_dist(
             go.Histogram(
                 arg=None,
                 alignmentgroup=None,
-                bingroup=None,
+                bingroup=0,
                 cumulative=None,
                 customdata=None,
                 customdatasrc=None,
