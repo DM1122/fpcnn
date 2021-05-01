@@ -81,7 +81,6 @@ You can find an interactive report of test results in `./logs/pytest-report.html
 * Implement batch processsing
 * Improve plotting utilities
 * Benchmarklib improvements to handle export of csv files
-* Create prototyping notebooks
 * Create hyperparameter optimization toolkit
 * Fix edge cases
 * Add explanation of algorithm to README
