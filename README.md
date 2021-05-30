@@ -22,7 +22,7 @@ Check out the interactive Google Colab [notebooks](https://colab.research.google
 ## Setup
 This section will take you through the procedure to configure a development environment for FPCNN. If you just want to play around with FPCNN, see the interactive [notebooks](https://colab.research.google.com/github/DM1122/fpcnn) on Google Colab.
 
-This repo employs [poetry](https://python-poetry.org/) as its dependency and environment manager. Poetry can be installed through the commandline via:
+This repo employs [poetry](https://python-poetry.org/) as its dependency and environment manager. Poetry can be installed through the Windows Powershell via:
 ```
 $ (Invoke-WebRequest -Uri https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py -UseBasicParsing).Content | python -
 ```
