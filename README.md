@@ -38,11 +38,9 @@ From within the cloned repo, run poetry's install command to install all the dep
 $ poetry install
 ```
 
-Enter the generated virtual environment via:
-```
-$ poetry shell
-```
-Ensure you are always interacting with the development environment through the shell. You're now ready to start contributing!
+To make VSCode use the virtual environment that poetry created, add poetry's virtual environment path `C:\Users\<USERNAME>\AppData\Local\pypoetry\Cache\virtualenvs` to VSCode's `Venv Path` under `File>Preferences>Settings`. Once you have done so, enter the command pallet by going to `View>Command Palette` and search for `Python:Select Interpreter`. Select poetry's virtual environment for the repo.
+
+You're now ready to start contributing!
 
 ## Commits
 ### Pre-Commit
