@@ -4,36 +4,6 @@
 import numpy as np
 
 
-def get_acc(A, B):
-    """
-    Compute accuracy.
-
-    Args:
-        A (ndarray): array to be evaluated
-        B (ndarray): array to be evaulated
-
-    Returns:
-        acc (float): percentage accuracy
-    """
-    assert A.size == B.size, f"Mistmatched array sizes (A:{A.size}, B:{B.size})"
-    assert A.ndim == 1, f"Array dim is not 1 (A:{A.ndim})"
-    assert B.ndim == 1, f"Array dim is not 1 (B:{B.ndim})"
-
-    n = A.size
-    score = 0
-
-    for i in range(n):
-        a = A[i].item()
-        b = B[i].item()
-
-        if a == b:
-            score += 1
-
-    acc = score / n
-
-    return acc
-
-
 def get_mae(A, B):
     """
     Compute the mean absolute error.
@@ -151,42 +121,60 @@ def get_diff(A, B):
     return diffs
 
 
-def get_compression_factor(A, B):
-    """Compute the compression factor between two arrays.
+def get_bpc(a):
+    """Calculates the bits per component of an array. BPC is a measure of information
+        density.
 
     Args:
-        A (ndarray): Original array
-        B (ndarray): Compressed array
+        a (numpy.ndarray): Data array.
 
-    TODO:
-        Return compression factor instead of printing
+    Returns:
+        float: Bits per component of array.
     """
-    bpv_A = A.nbytes * 8 / A.size
-    bpv_B = B.size / A.size
-
-    cf = bpv_A / bpv_B
-
-    print("Compression Stats:")
-    print(f"BPV (A):\t{bpv_A}")
-    print(f"BPV (B):\t{bpv_B}")
-    print(f"CF:\t{cf}")
+    bpc = a.nbytes * 8 / a.size
+    return bpc
 
 
-def print_error(A, B, title=""):
-    """Print various error statistics.
+def get_bpc_bitstream(a, size):
+    """For a given bitstream, computes the bits per component in accordance to its
+        original number of components (size).
 
     Args:
-        A (ndarray): truth array
-        B (ndarray): reference array
-    """
-    acc = get_acc(A=A, B=B)
-    mae = get_mae(A=A, B=B)
-    msae = get_msae(A=A, B=B)
-    mape = get_mape(A=A, B=B)
+        a (ndarray): An array of ones and zeros.
+        size (int): Original number of components in bitstream.
 
-    print(f"Error Measures: {title}")
-    print(f"ACC:\t{acc*100}%")
-    print(f"MAE:\t{mae}")
-    print(f"MSAE:\t{msae}")
-    print(f"MAPE:\t{mape}%")
-    print()
+    Returns:
+        bpc (float): bits per component
+    """
+    bpc = a.size / size
+    return bpc
+
+
+def get_cr(a, b):
+    """Get compression ratio between a compressed array and the original.
+
+    Args:
+        a (numpy.ndarray): Uncompressed data.
+        b (numpy.ndarray): Compressed data.
+
+    Returns:
+        float: Compression ratio.
+    """
+    cr = a.nbytes / b.nbytes
+    return cr
+
+
+def get_cr_bitstream(a, b):
+    """Calculates the compression ratio between a compressed bitstream and the orignal
+        data.
+
+
+    Args:
+        a (numpy.ndarray): Uncompressed data.
+        b (list): A python list of ones and zeros.
+
+    Returns:
+        float: Compression ratio.
+    """
+    cr = a.nbytes * 8 / b.size
+    return cr

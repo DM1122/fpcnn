@@ -28,3 +28,17 @@ def bin_to_dec(b):
     d = int("".join(str(x) for x in b), 2)
 
     return d
+
+
+def clamp(x, mn, mx):
+    """Clamp a number between an upper and lower bound.
+
+    Args:
+        x (num): A number.
+        mn (num): Lower bound.
+        mx (num): Upper bound.
+
+    Returns:
+        num: The clamped value.
+    """
+    return max(mn, min(x, mx))

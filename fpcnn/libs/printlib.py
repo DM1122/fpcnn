@@ -2,8 +2,26 @@
 
 # external
 import numpy as np
-import progress.spinner
-from progress.bar import Bar
+
+# project
+from fpcnn.libs import benchmarklib
+
+
+def get_tf_model_summary(model):
+    """Gets a Tensorflow model's summary as a string to enable logger compatibility.
+
+    Args:
+        model (tensorflow.python.keras.engine.functional.Functional): Tensorflow model.
+
+    Returns:
+        string: Model summary.
+    """
+    print(type(model))
+    lines = []
+    model.summary(print_fn=lambda line: lines.append(line))
+    summary = "\n".join(lines)
+
+    return summary
 
 
 def print_ndarray_stats(array, title=""):
@@ -19,6 +37,7 @@ def print_ndarray_stats(array, title=""):
     print(f"Dims:\t{array.ndim}")
     print(f"Type:\t{array.dtype}")
     print(f"Bytes:\t{array.nbytes} ({round(array.nbytes*10**-6,2)}MB)")
+    print(f"BPC:\t{benchmarklib.get_bpc(a=array)}")
     print(f"Range:\t{array.min()},{array.max()} ({array.max()-array.min()})")
     print(f"Mean:\t{round(array.mean(),2)}")
     print(f"Median:\t{round(np.median(array),2)}")
@@ -29,27 +48,3 @@ def print_ndarray_stats(array, title=""):
         print(f"{array[:5]}...{array[-5:]}")
 
     print()
-
-
-class ProgressBar(Bar):
-    """Custom progressbar class."""
-
-    suffix = (
-        "%(index)d/%(max)d (%(percent)d%%) - %(freq)d it/s - %(elapsed)ds:%(total)ds"
-    )
-
-    @property
-    def total(self):
-        """Progress bar total remaining time property."""
-        return self.elapsed + self.eta
-
-    @property
-    def freq(self):
-        """Progress bar frequency property."""
-        return 1 / self.avg
-
-
-class ProgressSpinner(progress.spinner.PieSpinner):
-    """Custom progress spinner class."""
-
-    suffix = "%(freq)d it/s - %(elapsed)ds"

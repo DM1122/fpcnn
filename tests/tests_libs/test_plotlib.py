@@ -13,6 +13,7 @@ from fpcnn.libs import plotlib, printlib
 
 @pytest.mark.plot
 def test_plot_series():
+    """Test for series plot."""
 
     x = np.linspace(
         start=-math.pi,
@@ -45,7 +46,7 @@ def test_plot_series():
 
 @pytest.mark.plot
 def test_plot_dist():
-
+    """Test for distribution plot."""
     x1 = np.random.normal(loc=0.0, scale=1.0, size=128)
     x2 = np.random.normal(loc=1, scale=0.75, size=128)
 
@@ -69,3 +70,56 @@ def test_plot_dist():
         hlines=None,
         dark_mode=True,
     )
+
+
+@pytest.mark.plot
+def test_plot_context():
+    """Test for context plot."""
+    offsets = [
+        # first shell
+        (-1, 0, 0),
+        (-1, -1, 0),
+        (0, -1, 0),
+        (1, -1, 0),
+        # second shell
+        (-2, 0, 0),
+        (-2, -1, 0),
+        (-2, -2, 0),
+        (-1, -2, 0),
+        (0, -2, 0),
+        (1, -2, 0),
+        (2, -2, 0),
+        (2, -1, 0),
+        # third shell
+        (-3, 0, 0),
+        (-3, -1, 0),
+        (-3, -2, 0),
+        (-3, -3, 0),
+        (-2, -3, 0),
+        (-1, -3, 0),
+        (0, -3, 0),
+        (1, -3, 0),
+        (2, -3, 0),
+        (3, -3, 0),
+        (3, -2, 0),
+        (3, -1, 0),
+        # fourth shell
+        (-4, 0, 0),
+        (-4, -1, 0),
+        (-4, -2, 0),
+        (-4, -3, 0),
+        (-4, -4, 0),
+        (-3, -4, 0),
+        (-2, -4, 0),
+        (-1, -4, 0),
+        (0, -4, 0),
+        (1, -4, 0),
+        (2, -4, 0),
+        (3, -4, 0),
+        (4, -4, 0),
+        (4, -3, 0),
+        (4, -2, 0),
+        (4, -1, 0),
+    ]
+
+    plotlib.plot_context(offsets=offsets, shape=(11, 11))

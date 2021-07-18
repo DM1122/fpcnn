@@ -1,10 +1,19 @@
 """Plotting utilities."""
 
+# stdlib
+import os
+
 # external
-import plotly as plt
+import matplotlib
+import matplotlib.pyplot as plt
+import numpy as np
+import plotly
 import plotly.express as px
 import plotly.graph_objects as go
 import spectral
+from skopt import plots as skplot
+
+matplotlib.use("TkAgg")
 
 
 def plot_series(
@@ -28,15 +37,19 @@ def plot_series(
         df (pandas.core.DataFrame): Pandas dataframe
         title (str): Plot title
         traces (list[str]): Column names of traces to graph
-        indicies (list[str], optional): Column names of indicies for trace to use. Defaults to None.
+        indicies (list[str], optional): Column names of indicies for trace to use.
+            Defaults to None.
         x_errors (str, optional): Column name of x-errors. Defaults to None.
         y_errors ([type], optional): Column name of y-errors. Defaults to None.
         title_x (str, optional): X-axis title. Defaults to "x".
         title_y (str, optional): Y-axis title. Defaults to "y".
         size (tuple, optional): Width and height of plot in pixels. Defaults to None.
-        draw_mode (str, optional): Whether to render lines or markers or both. Defaults to "lines+markers".
-        vlines (list[int], optional): List of ordinates for vertical lines. Defaults to None.
-        hlines (list[int], optional): List of ordinates for horizontal lines. Defaults to None.
+        draw_mode (str, optional): Whether to render lines or markers or both.
+            Defaults to "lines+markers".
+        vlines (list[int], optional): List of ordinates for vertical lines.
+            Defaults to None.
+        hlines (list[int], optional): List of ordinates for horizontal lines.
+            Defaults to None.
         dark_mode (bool, optional): Dark mode. Defaults to False.
     """
     fig = go.Figure()
@@ -44,9 +57,9 @@ def plot_series(
     template = "plotly" if not dark_mode else "plotly_dark"
 
     # draw traces
-    for i in range(len(traces)):
-        name = traces[i]
-        y = df[traces[i]]
+    for i, trace in enumerate(traces):
+        name = trace
+        y = df[trace]
         index = (
             df[indicies[i]] if indicies is not None else df.index
         )  # cannot have one trace use df.index and others not. WIP
@@ -209,13 +222,16 @@ def plot_dist(
         title_x (str, optional): X-axis title. Defaults to "x".
         title_y (str, optional): Y-axis title. Defaults to "y".
         size (tuple, optional): Width and height of plot in pixels. Defaults to None.
-        draw_mode (str, optional): Whether to render lines or markers or both. Defaults to "lines+markers".
-        vlines (list[int], optional): List of ordinates for vertical lines. Defaults to None.
-        hlines (list[int], optional): List of ordinates for horizontal lines. Defaults to None.
+        draw_mode (str, optional): Whether to render lines or markers or both.
+            Defaults to "lines+markers".
+        vlines (list[int], optional): List of ordinates for vertical lines.
+            Defaults to None.
+        hlines (list[int], optional): List of ordinates for horizontal lines.
+            Defaults to None.
         dark_mode (bool, optional): Dark mode. Defaults to False.
     """
     fig = go.Figure()
-    fig = plt.subplots.make_subplots(
+    fig = plotly.subplots.make_subplots(
         rows=2,
         cols=1,
         shared_xaxes=True,
@@ -240,9 +256,9 @@ def plot_dist(
     opacity = 1.0 if len(traces) == 1 else 0.75
 
     # draw traces
-    for i in range(len(traces)):
-        name = traces[i]
-        x = df[traces[i]]
+    for i, trace in enumerate(traces):
+        name = trace
+        x = df[trace]
         x_error = df[x_errors[i]] if x_errors is not None else None
         y_error = df[y_errors[i]] if y_errors is not None else None
 
@@ -483,3 +499,113 @@ def plot_band(data, band, title):
     # legendgroup=i,
     # showlegend=False,
     # name=name,
+
+
+# region skopt
+def plot_skopt_convergence(opt_res, path):
+    """Plots the convergence plot from the skopt package.
+
+    Args:
+        opt_res (scipy.optimize.OptimizeResult): Optimization result object.
+        path (str): Directory at which to save plot.
+    """
+    if not os.path.exists(path):
+        os.makedirs(path)
+
+    fig = plt.figure()
+    skplot.plot_convergence(opt_res, ax=None, true_minumum=None, yscale=None)
+    fig = plt.gcf()
+    fig.tight_layout()
+    fig.savefig(path + "convergence")
+    fig.show()
+
+
+def plot_skopt_evaluations(opt_res, path):
+    """Plots the evaluations plot from the skopt package.
+
+    Args:
+        opt_res (scipy.optimize.OptimizeResult): Optimization result object.
+        path (str): Directory at which to save plot.
+    """
+    if not os.path.exists(path):
+        os.makedirs(path)
+
+    skplot.plot_evaluations(result=opt_res, bins=32, dimensions=None, plot_dims=None)
+    fig = plt.gcf()
+    fig.tight_layout()
+    fig.savefig(path + "evaluations")
+    fig.show()
+
+
+def plot_skopt_objective(opt_res, path):
+    """Plots the objective plot from the skopt package.
+
+    Args:
+        opt_res (scipy.optimize.OptimizeResult): Optimization result object.
+        path (str): Directory at which to save plot.
+    """
+    if not os.path.exists(path):
+        os.makedirs(path)
+
+    skplot.plot_objective(
+        result=opt_res,
+        levels=64,
+        n_points=64,
+        n_samples=256,
+        size=2,
+        zscale="linear",
+        dimensions=None,
+        sample_source="random",
+        minimum="result",
+        n_minimum_search=None,
+        plot_dims=None,
+        show_points=True,
+        cmap="viridis_r",
+    )
+    fig = plt.gcf()
+    fig.tight_layout()
+    fig.savefig(path + "objective")
+    fig.show()
+
+
+def plot_skopt_regret(opt_res, path):
+    """Plots the regret plot from the skopt package.
+
+    Args:
+        opt_res (scipy.optimize.OptimizeResult): Optimization result object.
+        path (str): Directory at which to save plot.
+    """
+    if not os.path.exists(path):
+        os.makedirs(path)
+    fig = plt.figure()
+    skplot.plot_regret(opt_res, ax=None, true_minumum=None, yscale=None)
+    fig = plt.gcf()
+    fig.tight_layout()
+    fig.savefig(path + "regret")
+    fig.show()
+
+
+# endregion
+
+
+def plot_context(offsets, shape):
+    """Plots context selection for visualization.
+
+    Args:
+        offsets (list): List of offsets to visualize.
+        shape (tuple): Shape of context window.
+    """
+    assert shape[0] & 1 and shape[1] & 1, f"Shape is not odd {shape}"
+
+    matrix = np.zeros(
+        shape=(shape[1], shape[0]), dtype=np.uint8, order="C"
+    )  # matplotlib.matshow() defines their matricies as (y, x) (i think..?)
+
+    center = (shape[0] // 2, shape[1] // 2)
+    matrix[center[1]][center[0]] = 1
+    for offset in offsets:
+        matrix[center[1] + offset[1]][center[0] + offset[0]] = 2
+
+    plt.matshow(A=matrix, fignum=None)
+    plt.grid(b=False, which="major", axis="both")
+    plt.show()

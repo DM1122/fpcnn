@@ -1,4 +1,4 @@
-"""FPCNN pipeline functions."""
+"""FPCNN encoding functions."""
 
 # external
 import numpy as np
@@ -11,15 +11,15 @@ def map_residuals(data):
     """Map residuals to positive values using overlap and interleave scheme.
 
     Args:
-        data (ndarray): 1D ndarray of residuals
+        data (numpy.ndarray): 1D ndarray of residuals.
 
     Returns:
-        output (ndarray): Mapped values
+        output (numpy.ndarray): Mapped values.
     """
     assert data.ndim == 1, f"Array does not have ndim=1 ({data.ndim})"
 
     n = data.size
-    output = np.zeros(shape=(n), dtype="uint16", order="C")
+    output = np.zeros(shape=(n), dtype="int32", order="C")
 
     for i in range(n):
         x = data[i].item()
@@ -28,6 +28,10 @@ def map_residuals(data):
             x = 2 * x
         else:
             x = -2 * x - 1
+
+        assert (
+            np.iinfo(np.int32).min < x < np.iinfo(np.int32).max
+        ), f"Overflow of residual '{x}'."
 
         output[i] = x
 
@@ -45,11 +49,11 @@ def grc_encode(data, m):
     Useful for sparse data with many 0s and few 1s.
 
     Args:
-        data (ndarray): Array of intergers to be encoded
-        m (int): Goulomb parameter
+        data (numpy.ndarray): Array of intergers to be encoded.
+        m (int): Goulomb parameter.
 
     Returns:
-        code (ndarray): Encoded array of bits
+        code (ndarray): Encoded array of bits.
     """
     M = 2 ** m
 
@@ -86,12 +90,12 @@ def grc_decode(code, m):
     bit sequence. Useful for sparse data with many 0s and few 1s.
 
     Args:
-        data (ndarray): Bitstream to be decoded
+        data (numpy.ndarray): Bitstream to be decoded.
         m (int): Goulomb parameter. Must match the value used at
-        the encoder stage
+            the encoder stage.
 
     Returns:
-        data (ndarray): Decoded values
+        data (numpy.ndarray): Decoded values.
     """
     M = 2 ** m
 
@@ -123,10 +127,10 @@ def remap_residuals(data):
     """Remap residuals by reversing overlap and interleave.
 
     Args:
-        data (ndarray): Array of mapped values
+        data (numpy.ndarray): Array of mapped values.
 
     Returns:
-        output (ndarray): Remapped values
+        output (numpy.ndarray): Remapped values.
     """
     assert data.ndim == 1, f"Array does not have ndim=1 ({data.ndim})"
 
