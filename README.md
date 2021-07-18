@@ -65,7 +65,7 @@ To add a new package to the poetry virtual environment, install it via:
 ```
 poetry add <PACKAGE>
 ```
-This is poetry's version of `pip install <PACKAGE>`.
+This is poetry's version of `pip install <package>`.
 
 ## Testing
 This repo uses [pytest](https://docs.pytest.org/en/6.2.x/) for unit testing. To run all unit tests, call:
