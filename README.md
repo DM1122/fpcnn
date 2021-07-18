@@ -76,7 +76,7 @@ pytest -v
 
 You can find an interactive report of test results in `./logs/pytest-report.html`. Individual tests can also be specified as follows:
 ```
-pytest tests/test_main.py::my_test_function
+pytest tests/test_<filename>.py::<function name>
 ```
 
 Groups of tests can be run using markers. Assign a marker decorator to the group of functions you want to test like this:
