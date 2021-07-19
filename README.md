@@ -63,9 +63,9 @@ You're now ready to start contributing!
 ## Adding Packages
 To add a new package to the poetry virtual environment, install it via:
 ```
-poetry add <PACKAGE>
+poetry add <package>
 ```
-This is poetry's version of `pip install <PACKAGE>`.
+This is poetry's version of `pip install <package>`.
 
 ## Testing
 This repo uses [pytest](https://docs.pytest.org/en/6.2.x/) for unit testing. To run all unit tests, call:
@@ -74,9 +74,9 @@ This repo uses [pytest](https://docs.pytest.org/en/6.2.x/) for unit testing. To 
 pytest -v
 ```
 
-You can find an interactive report of test results in `./logs/pytest-report.html`. Indivdual tests can also be specified as follows:
+You can find an interactive report of test results in `./logs/pytest-report.html`. Individual tests can also be specified as follows:
 ```
-pytest tests/test_main.py::my_test_function
+pytest tests/test_<filename>.py::<function name>
 ```
 
 Groups of tests can be run using markers. Assign a marker decorator to the group of functions you want to test like this:
@@ -106,7 +106,7 @@ This repo is configured to use [pre-commit](https://pre-commit.com/) hooks. The 
 1. [Black](https://black.readthedocs.io/en/stable/): The uncompromising code autoformatter.
 1. [Pylint](https://github.com/pycqa/pylint): It's not just a linter that annoys you!
 
-Pre-commit will run the hooks on commit, but when a hook fails, they can be run manually to debug using:
+Pre-commit will run the hooks on commit, but when a hook fails, they can be run manually to delint using:
 
 ```
 isort . & black . & pylint_runner
