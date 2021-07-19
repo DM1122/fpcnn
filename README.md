@@ -63,7 +63,7 @@ You're now ready to start contributing!
 ## Adding Packages
 To add a new package to the poetry virtual environment, install it via:
 ```
-poetry add <PACKAGE>
+poetry add <package>
 ```
 This is poetry's version of `pip install <package>`.
 
