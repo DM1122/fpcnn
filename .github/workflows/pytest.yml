@@ -26,7 +26,6 @@ jobs:
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@master
       with:
-        files: pytest-coverage
         directory: ./logs/pytest/
         env_vars: OS,PYTHON
         name: codecov-umbrella

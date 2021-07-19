@@ -7,6 +7,7 @@
 [![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/DM1122/fpcnn)](https://github.com/DM1122/fpcnn)
 ![Lines of code](https://img.shields.io/tokei/lines/github/DM1122/fpcnn)
 [![Pytest](https://github.com/DM1122/fpcnn/actions/workflows/pytest.yml/badge.svg)](https://github.com/DM1122/fpcnn/actions/workflows/pytest.yml)
+[![codecov](https://codecov.io/gh/DM1122/fpcnn/branch/main/graph/badge.svg?token=E2N1A55HGR)](https://codecov.io/gh/DM1122/fpcnn)
 
 
 <img src="img/utat-logo.png" height="64">
