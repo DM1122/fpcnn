@@ -41,7 +41,7 @@ import_heading_firstparty="project"
 line-length = 88
 
 [tool.pytest.ini_options]
-addopts = "--html=logs/pytest/pytest-report.html --self-contained-html --cov=." 
+addopts = "--html=logs/pytest/pytest-report.html --self-contained-html --cov=./" 
 testpaths = ["tests"]
 log_cli = false
 log_cli_level = "INFO"
