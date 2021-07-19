@@ -1,6 +1,7 @@
 """Plotting utilities."""
 
 # stdlib
+import logging
 import os
 
 # external
@@ -13,7 +14,12 @@ import plotly.graph_objects as go
 import spectral
 from skopt import plots as skplot
 
-matplotlib.use("TkAgg")
+LOG = logging.getLogger(__name__)
+
+try:
+    matplotlib.use("TkAgg")
+except ImportError:
+    LOG.warning("Cannot import tkAgg. Probably running headless.")
 
 
 def plot_series(
