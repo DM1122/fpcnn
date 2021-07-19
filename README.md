@@ -6,6 +6,7 @@
 [![GitHub repo size](https://img.shields.io/github/repo-size/DM1122/fpcnn)](https://github.com/DM1122/fpcnn)
 [![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/DM1122/fpcnn)](https://github.com/DM1122/fpcnn)
 ![Lines of code](https://img.shields.io/tokei/lines/github/DM1122/fpcnn)
+[![Pytest](https://github.com/DM1122/fpcnn/actions/workflows/pytest.yml/badge.svg)](https://github.com/DM1122/fpcnn/actions/workflows/pytest.yml)
 
 
 <img src="img/utat-logo.png" height="64">
