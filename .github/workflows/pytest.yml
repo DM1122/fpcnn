@@ -29,14 +29,7 @@ jobs:
         ls -a
         cd pytest
         ls -a
-    - name: Upload coverage to Codecov
-      run: |
-        pwd
-        ls -a
-        cd logs
-        ls -a
-        cd pytest
-        ls -a    
+    - name: Upload coverage to Codecov 
       uses: codecov/codecov-action@master
       with:
         files: pytest-coverage
@@ -45,13 +38,6 @@ jobs:
         name: codecov-umbrella
         fail_ci_if_error: true
         verbose: true
-      run: |
-        pwd
-        ls -a
-        cd logs
-        ls -a
-        cd pytest
-        ls -a
 
 
 
