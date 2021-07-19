@@ -24,6 +24,7 @@ jobs:
       run: |
         poetry run pytest -v
         pwd
+        ls -a
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@master
       with:
