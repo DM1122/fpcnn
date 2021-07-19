@@ -5,6 +5,7 @@ import logging
 
 # external
 import numpy as np
+import pytest
 
 # project
 from fpcnn import models
@@ -181,6 +182,7 @@ def test_fpcnn_compress():
     LOG.info(f"Output ({output.shape}, {output.dtype}):\n{output}")
 
 
+@pytest.mark.skip("Not implemented")
 def test_fpccn_decompress():
     """Test the FPCNN class decompression function."""
 

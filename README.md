@@ -74,7 +74,7 @@ This repo uses [pytest](https://docs.pytest.org/en/6.2.x/) for unit testing. To 
 pytest -v
 ```
 
-You can find an interactive report of test results in `./logs/pytest-report.html`. Individual tests can also be specified as follows:
+You can find an interactive report of test results in `./logs/pytest/pytest-report.html`. Individual tests can also be specified as follows:
 ```
 pytest tests/test_<filename>.py::<function name>
 ```

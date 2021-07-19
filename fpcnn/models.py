@@ -62,9 +62,14 @@ class FPCNN:
         self._model, self._optimizer, self._losser = self._build_model()
         summary = printlib.get_tf_model_summary(self._model)
         LOG.info(summary)
-        tf.keras.utils.plot_model(
-            self._model, self._logdir_plot + self._logdate + ".png", show_shapes=True
-        )
+        try:
+            tf.keras.utils.plot_model(
+                self._model,
+                self._logdir_plot + self._logdate + ".png",
+                show_shapes=True,
+            )
+        except ImportError:
+            LOG.warning("Could not draw model. Probably running headless.")
 
         # write initial weights and biases to tensorboard
         self._tb_weights(step=-1)

@@ -41,7 +41,7 @@ import_heading_firstparty="project"
 line-length = 88
 
 [tool.pytest.ini_options]
-addopts = "--html=logs/pytest-report.html --self-contained-html" 
+addopts = "--html=logs/pytest/pytest-report.html --self-contained-html --cov=." 
 testpaths = ["tests"]
 log_cli = false
 log_cli_level = "INFO"
@@ -63,3 +63,6 @@ max-line-length = 88
 disable = ["invalid-name","too-many-arguments", "too-many-locals", "arguments-differ", "unnecessary-lambda", "too-many-instance-attributes", "protected-access", "duplicate-code", "too-few-public-methods", "logging-fstring-interpolation", "not-callable", "too-many-statements", "pointless-statement", "not-context-manager","fixme"]
 generated-members=["numpy.*","torch.*"] # https://github.com/pytorch/pytorch/issues/701
 
+[tool.coverage.run]
+data_file = "logs/pytest/pytest-coverage"
+omit = ["tests/*"]
