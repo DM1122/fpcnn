@@ -25,11 +25,11 @@ jobs:
         poetry install
     - name: Pytest
       run: |
-        poetry run pytest -v
+        poetry run pytest -v -cov-report=xml
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@master
       with:
-        files: fpcnn/logs/pytest/pytest-coverage
+        files: ./coverage.xml
         env_vars: OS,PYTHON
         name: codecov-umbrella
         fail_ci_if_error: true
