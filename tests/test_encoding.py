@@ -12,7 +12,7 @@ from fpcnn import encoding
 
 LOG = logging.getLogger(__name__)
 
-
+@pytest.mark.star
 def test_map_residuals():
     """Test for residual mapping."""
 
@@ -24,7 +24,7 @@ def test_map_residuals():
     data_mapped = encoding.map_residuals(data)
     LOG.info(f"Data mapped ({data_mapped.shape}, {data_mapped.dtype}):\n{data_mapped}")
 
-    assert np.all(data_mapped < 0) is False, "Non-positive value found"
+    assert np.all(data_mapped > 0), "Non-positive value found"
 
 
 def test_grc_encode():
@@ -55,7 +55,6 @@ def test_grc_decode():
     )
 
 
-@pytest.mark.star
 def test_remap_residuals():
     """Test for residual remapping."""
 
