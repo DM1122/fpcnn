@@ -1,25 +1,32 @@
 """FPCNN encoding functions."""
 
+# stdlib
+import logging
+
 # external
 import numpy as np
 
 # project
 from fpcnn.libs import mathlib
 
+LOG = logging.getLogger(__name__)
+
 
 def map_residuals(data):
     """Map residuals to positive values using overlap and interleave scheme.
 
     Args:
-        data (numpy.ndarray): 1D ndarray of residuals.
+        data (numpy.ndarray): 1D array of residuals.
 
     Returns:
-        output (numpy.ndarray): Mapped values.
+        numpy.ndarray: Mapped values.
     """
     assert data.ndim == 1, f"Array does not have ndim=1 ({data.ndim})"
 
     n = data.size
-    output = np.zeros(shape=(n), dtype="int32", order="C")
+
+    output = np.empty(shape=n, dtype=data.dtype)
+    LOG.debug(f"Empty output array ({output.shape}, {output.dtype}):\n{output}")
 
     for i in range(n):
         x = data[i].item()
@@ -39,7 +46,7 @@ def map_residuals(data):
 
 
 def grc_encode(data, m):
-    """Goulomb-Rice encoder.
+    """Goulomb-Rice encoding.
 
     Each codeword is structured as
     <quotient code><remainder code>. The parameter 'm' defines
@@ -49,11 +56,11 @@ def grc_encode(data, m):
     Useful for sparse data with many 0s and few 1s.
 
     Args:
-        data (numpy.ndarray): Array of intergers to be encoded.
+        data (numpy.ndarray): Array of positive intergers to be encoded.
         m (int): Goulomb parameter.
 
     Returns:
-        code (ndarray): Encoded array of bits.
+        numpy.ndarray: Encoded array of bits.
     """
     M = 2 ** m
 
@@ -81,7 +88,7 @@ def grc_encode(data, m):
 
 
 def grc_decode(code, m):
-    """Goulomb-Rice decoder.
+    """Goulomb-Rice decoding.
 
     Each codeword is structured as <quotient code><remainder code>.
     The parameter 'm' defines via M=2^m the Golomb slope of the
@@ -95,7 +102,7 @@ def grc_decode(code, m):
             the encoder stage.
 
     Returns:
-        data (numpy.ndarray): Decoded values.
+        numpy.ndarray: Decoded values.
     """
     M = 2 ** m
 
@@ -118,7 +125,7 @@ def grc_decode(code, m):
             q = 0
             i += m
 
-    data = np.array(data, dtype="uint16", order="C")
+    data = np.array(object=data, dtype="uint16", order="C")
 
     return data
 
@@ -130,12 +137,12 @@ def remap_residuals(data):
         data (numpy.ndarray): Array of mapped values.
 
     Returns:
-        output (numpy.ndarray): Remapped values.
+        numpy.ndarray: Remapped values.
     """
     assert data.ndim == 1, f"Array does not have ndim=1 ({data.ndim})"
 
     n = data.size
-    output = np.zeros(shape=(n), dtype="int16", order="C")
+    output = np.zeros(shape=n, dtype=np.int64)
 
     for i in range(n):
         x = data[i].item()
