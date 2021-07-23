@@ -12,7 +12,7 @@ from fpcnn import encoding
 
 LOG = logging.getLogger(__name__)
 
-@pytest.mark.star
+
 def test_map_residuals():
     """Test for residual mapping."""
 
@@ -68,3 +68,29 @@ def test_remap_residuals():
         f"Data remapped ({data_remapped.shape}, {data_remapped.dtype}):\n"
         f"{data_remapped}"
     )
+
+
+@pytest.mark.star
+def test_map_remap_residuals():
+    """Test for residual mapping and remapping."""
+
+    rng = np.random.default_rng()
+    data = rng.integers(low=-32768, high=32767, size=32)
+    LOG.info(f"Data ({data.shape}, {data.dtype}):\n{data}")
+
+    # map
+    LOG.info("Mapping residuals")
+    data_mapped = encoding.map_residuals(data)
+    LOG.info(f"Data mapped ({data_mapped.shape}, {data_mapped.dtype}):\n{data_mapped}")
+
+    # remap
+    LOG.info("Remapping residuals")
+    data_remapped = encoding.remap_residuals(data_mapped)
+    LOG.info(
+        f"Data remapped ({data_remapped.shape}, {data_remapped.dtype}):\n"
+        f"{data_remapped}"
+    )
+
+    assert np.array_equal(
+        a1=data, a2=data_remapped
+    ), "Data and remapped data are not equal"

@@ -135,18 +135,19 @@ def get_bpc(a):
     return bpc
 
 
-def get_bpc_bitstream(a, size):
-    """For a given bitstream, computes the bits per component in accordance to its
-        original number of components (size).
+def get_bpc_encoded(original, encoded):
+    """For a given encoded bitstream, computes the bits per component in accordance to
+        its original number of components.
 
     Args:
-        a (ndarray): An array of ones and zeros.
-        size (int): Original number of components in bitstream.
+        original (numpy.ndarray): Original data array.
+        encoded (numpy.ndarray): Encoded bitstream.
 
     Returns:
         bpc (float): bits per component
     """
-    bpc = a.size / size
+    bpc = encoded.size / original.size
+
     return bpc
 
 
