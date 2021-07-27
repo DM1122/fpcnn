@@ -45,7 +45,7 @@ The repo employs [poetry](https://python-poetry.org/) <img src="img/poetry-logo.
 Clone the repo using [Github Desktop](https://desktop.github.com/) <img src="img/github-desktop-logo.png" height="16"/> or the commandline via:
 
 ```
-git clone https://github.com/DM1122/spotify-skip-prediction.git
+git clone https://github.com/DM1122/fpcnn.git
 ```
 
 From within the cloned repo, run poetry's install command to install all the dependencies in one go:
