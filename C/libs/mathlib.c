@@ -1,6 +1,20 @@
 #include <stdio.h>
 #include <math.h>
 
+//Flatten
+uint16_t* flatten(int data_size_x, int data_size_y, int data_size_z, uint16_t data[data_size_x][data_size_y][data_size_z])
+{
+    int i = 0;
+    uint16_t* data_flat = malloc(sizeof(uint16_t) * data_size_x * data_size_y * data_size_z);
+    for(int x = 0; x < data_size_x; ++x)
+        for(int y = 0; y < data_size_y; ++y)
+            for(int z = 0; z < data_size_z; ++z)
+                data_flat[i++] = data[x][y][z];
+
+    return data_flat;
+}
+
+
 //Get entropy of an information source
 double get_entropy(uint16_t*** data, int data_size_x, int data_size_y, int data_size_z)
 {
@@ -14,11 +28,9 @@ double get_entropy(uint16_t*** data, int data_size_x, int data_size_y, int data_
             for(int z = 0; z < data_size_z; ++z)
                 probs[data[x][y][z]] += 1;
     
-    double entropy = 0
-    for(int x = 0; x < data_size_x; ++x)
-        for(int y = 0; y < data_size_y; ++y)
-            for(int z = 0; z < data_size_z; ++z)
-                entropy += probs[x][y][z] * log2l(1 / probs[x][y][z]);
+    double entropy = 0;
+    for(int i = 0; i < 65536; ++i)
+        entropy += probs[i] * log2l(1 / probs[i]);
     
     return entropy;
 }
@@ -43,9 +55,4 @@ dArray* dec_to_bin(int x)
     }
 
     return bin;
-}
-
-int main(void)
-{
-
 }

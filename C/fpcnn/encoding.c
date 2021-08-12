@@ -129,20 +129,67 @@ uint16_t* remap_residuals(uint16_t* data, int data_size)
 
 int main(void)
 {
-    //remap_residuals test
-    uint16_t data[10] = {6, 2, 9, 5, 0, 4, 7, 3, 8, 1};
-    int data_size = 10;
+    //Create 3D data Block for testing functions:
+    int data_size_x = 5;
+    int data_size_y = 5;
+    int data_size_z = 5;
 
-    //uint16_t* one = map_residuals(data, data_size);
+    uint16_t data[data_size_x][data_size_y][data_size_z];
     
-    dArray* two = malloc(sizeof(dArray));
-    two = grc_encode(data, data_size, 2);
+
+    for(int x = 0; x < data_size_x; ++x)
+    {
+        printf("\n");
+        for(int y = 0; y < data_size_y; ++y)
+        {
+            printf(" ");
+            for(int z = 0; z < data_size_z; ++z)
+            {
+                //printf(" %d ", (rand() % 5));
+                data[x][y][z] = rand() % UINT16_MAX;
+                printf("%u ", data[x][y][z]);
+            }
+        }
+    }
+    printf("\n");
+
+    //Flatten Test
+    uint16_t* data_flat = malloc(sizeof(uint16_t*));
+    data_flat = flatten(data_size_x, data_size_y, data_size_z, data);
+
+    for(int i = 0; i < data_size_x * data_size_y * data_size_z; ++i)
+       printf("%d ", data_flat[i]);
+
+    // //Entropy test
+    // int data_size_x = 10;
+    // int data_size_y = 20;
+    // int data_size_z = 30;
+
+    // uint16_t data[data_size_x][data_size_y][data_size_z];
+
+    // for(int x = 0; x < data_size_x; ++x)
+    //     for(int y = 0; y < data_size_y; ++y)
+    //         for(int z = 0; z < data_size_z; ++z)
+    //             data[x][y][z] = rand() % 65536;
     
-    dArray* three = malloc(sizeof(dArray));
-    three = grc_decode(two, 2);
+    // double entropy = get_entropy(data, data_size_x, data_size_y, data_size_z);
+    // printf("Entropy: %f", entropy);
+
     
-    for(int i = 0; i < three->used; ++i)
-        printf("%i ", three->array[i]);
+    //remap_residuals test
+    // uint16_t data[10] = {6, 2, 9, 5, 0, 4, 7, 3, 8, 1};
+    // int data_size = 10;
+
+    // //uint16_t* one = map_residuals(data, data_size);
+    
+    // dArray* two = malloc(sizeof(dArray));
+    // two = grc_encode(data, data_size, 2);
+    
+    // dArray* three = malloc(sizeof(dArray));
+    // three = grc_decode(two, 2);
+    
+    // for(int i = 0; i < three->used; ++i)
+    //     printf("%i ", three->array[i]);
 
     //uint16_t* four = remap_residuals(three->array, data_size);
 
