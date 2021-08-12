@@ -10,6 +10,7 @@
 
 uint16_t* map_residuals(uint16_t* data, int data_size)
 {
+    printf("map_residuals\n");
     //Assert (how do i do this in c?, ill make a helper, or maybe its already a thing)
     int n = data_size;
     uint16_t* output = calloc(n, sizeof(uint16_t));
@@ -30,6 +31,7 @@ uint16_t* map_residuals(uint16_t* data, int data_size)
 
 dArray* grc_encode(uint16_t* data, int data_size, int m)
 {
+    printf("grc_encode\n");
     int M = pow(2, m);
 
     dArray* code = init_dArray(1);
@@ -58,7 +60,7 @@ dArray* grc_encode(uint16_t* data, int data_size, int m)
             v = dec_to_bin(r + c);
         
         for(int t = 0; t < q + 1; ++t)
-            insert_dArray(code, u[t]);
+            insert_dArray(code, u[t]); //I think the max size these reach is 4, can just set init size to 4. one of em goes to 8 actually so idk.
         for(int t = 0; t < v->used; ++t)
             insert_dArray(code, v->array[t]);
 
@@ -70,6 +72,7 @@ dArray* grc_encode(uint16_t* data, int data_size, int m)
 
 dArray* grc_decode(dArray* code, int m)
 {
+    printf("grc_decode\n");
     int M = pow(2, m);
     
     dArray* data = init_dArray(0);
@@ -105,6 +108,7 @@ dArray* grc_decode(dArray* code, int m)
 
 uint16_t* remap_residuals(uint16_t* data, int data_size)
 {
+    printf("remap_residuals\n");
     int n = data_size;
     uint16_t* output = calloc(data_size, sizeof(uint16_t));
 
@@ -125,25 +129,25 @@ uint16_t* remap_residuals(uint16_t* data, int data_size)
 
 int main(void)
 {
-    // //remap_residuals test
-    // uint16_t data[100] = {83, 84, 96, 66, 73, 99, 26, 71, 45, 76, 55, 85, 24, 91, 61, 9, 33, 7, 43, 69, 4, 1, 34, 44, 40, 14, 18, 97, 42, 80, 15, 13, 16, 23, 50, 22, 59, 29, 31, 5, 51, 6, 98, 100, 46, 58, 94, 11, 37, 65, 86, 92, 8, 72, 2, 63, 88, 35, 32, 60, 25, 81, 3, 30, 57, 74, 78, 82, 70, 68, 20, 75, 19, 52, 27, 28, 49, 62, 41, 10, 21, 79, 17, 38, 36, 39, 77, 48, 56, 89, 53, 64, 12, 90, 67, 95, 47, 87, 54, 93};
-    // int data_size = 100;
+    //remap_residuals test
+    uint16_t data[10] = {6, 2, 9, 5, 0, 4, 7, 3, 8, 1};
+    int data_size = 10;
 
-    // uint16_t* one = map_residuals(data, data_size);
+    //uint16_t* one = map_residuals(data, data_size);
     
-    // dArray* two = malloc(sizeof(dArray));
-    // two = grc_encode(one, data_size, 2);
+    dArray* two = malloc(sizeof(dArray));
+    two = grc_encode(data, data_size, 2);
     
-    // dArray* three = malloc(sizeof(dArray));
-    // three = grc_decode(two, 2);
+    dArray* three = malloc(sizeof(dArray));
+    three = grc_decode(two, 2);
     
-    // for(int i = 0; i < three->used; ++i)
-    //     printf("%i ", three->array[i]);
+    for(int i = 0; i < three->used; ++i)
+        printf("%i ", three->array[i]);
 
-    // uint16_t* four = remap_residuals(three->array, data_size);
+    //uint16_t* four = remap_residuals(three->array, data_size);
 
-    // for(int i = 0; i < data_size; ++i)
-    //     printf("%i ", four[i]);
+    //for(int i = 0; i < data_size; ++i)
+    //    printf("%i ", four[i]);
 
 
 

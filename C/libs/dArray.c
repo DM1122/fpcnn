@@ -5,7 +5,7 @@
 typedef struct
 {
     //Can add conditional (i think?) for which unint?_t
-    uint16_t*  array; //8 bc i think thats how big a point has to be? unsure
+    uint8_t*  array; //8 bc i think thats how big a pointer has to be? unsure
     uint32_t  size;
     uint32_t  used; 
 } dArray;
