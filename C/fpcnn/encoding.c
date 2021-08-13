@@ -130,9 +130,9 @@ uint16_t* remap_residuals(uint16_t* data, int data_size)
 int main(void)
 {
     //Create 3D data Block for testing functions:
-    int data_size_x = 5;
-    int data_size_y = 5;
-    int data_size_z = 5;
+    int data_size_x = 3;
+    int data_size_y = 3;
+    int data_size_z = 3;
 
     uint16_t data[data_size_x][data_size_y][data_size_z];
     
@@ -147,33 +147,25 @@ int main(void)
             {
                 //printf(" %d ", (rand() % 5));
                 data[x][y][z] = rand() % UINT16_MAX;
-                printf("%u ", data[x][y][z]);
+                printf("%u\t", data[x][y][z]);
             }
         }
     }
     printf("\n");
 
     //Flatten Test
-    uint16_t* data_flat = malloc(sizeof(uint16_t*));
+    uint16_t* data_flat;
     data_flat = flatten(data_size_x, data_size_y, data_size_z, data);
 
     for(int i = 0; i < data_size_x * data_size_y * data_size_z; ++i)
        printf("%d ", data_flat[i]);
 
     // //Entropy test
-    // int data_size_x = 10;
-    // int data_size_y = 20;
-    // int data_size_z = 30;
+    uint16_t test[] = {0, 1, 1}; //Testbook Example (Answer is 0.92, code gets 0.918296)
 
-    // uint16_t data[data_size_x][data_size_y][data_size_z];
-
-    // for(int x = 0; x < data_size_x; ++x)
-    //     for(int y = 0; y < data_size_y; ++y)
-    //         for(int z = 0; z < data_size_z; ++z)
-    //             data[x][y][z] = rand() % 65536;
-    
-    // double entropy = get_entropy(data, data_size_x, data_size_y, data_size_z);
-    // printf("Entropy: %f", entropy);
+    double entropy = get_entropy(data_flat, data_size_x * data_size_y * data_size_z);
+    double entropy = get_entropy(test, 3);
+    printf("\nEntropy: %f\n", entropy);
 
     
     //remap_residuals test

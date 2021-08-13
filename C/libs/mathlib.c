@@ -4,6 +4,14 @@
 //Flatten
 uint16_t* flatten(int data_size_x, int data_size_y, int data_size_z, uint16_t data[data_size_x][data_size_y][data_size_z])
 {
+    /*
+    Flattens 3D array with specified size into 1 dimensional array.
+
+    Args:
+        uint16_t array [data_size_x][data_size_y][data_size_z]
+    Returns:
+        uint16_t array [data_size_x * data_size_y * data_size_z]
+    */
     int i = 0;
     uint16_t* data_flat = malloc(sizeof(uint16_t) * data_size_x * data_size_y * data_size_z);
     for(int x = 0; x < data_size_x; ++x)
@@ -16,22 +24,27 @@ uint16_t* flatten(int data_size_x, int data_size_y, int data_size_z, uint16_t da
 
 
 //Get entropy of an information source
-double get_entropy(uint16_t*** data, int data_size_x, int data_size_y, int data_size_z)
+double get_entropy(uint16_t* data, int data_size)
 {
     /*
-    Input: Unsigned 16 bit 3D integer arrays
-    Output: Unsigned double (can probably be changed to float)
+    Calculates the entropy of a flattened 3D image.
+
+    Args:
+        Unsigned 16 bit 1D integer array, and its size.
+    Returns:
+        Unsigned double (can probably be changed to float).
     */
     float probs[65536] = {0};
-    for(int x = 0; x < data_size_x; ++x)
-        for(int y = 0; y < data_size_y; ++y)
-            for(int z = 0; z < data_size_z; ++z)
-                probs[data[x][y][z]] += 1;
+    for(int i = 0; i < data_size; ++i)
+        probs[data[i]] += 1;
     
     double entropy = 0;
     for(int i = 0; i < 65536; ++i)
-        entropy += probs[i] * log2l(1 / probs[i]);
-    
+        if(probs[i] != 0)
+        {
+            printf("%f\n", log2(1 / (probs[i] / data_size)));
+            entropy += (probs[i] / data_size) * log2(1 / (probs[i] / data_size));
+        }
     return entropy;
 }
 
