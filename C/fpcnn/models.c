@@ -6,6 +6,7 @@
 #include "models.h"
 
 void _valideate_offsets(Hyperparameters* hyperparams);
+void _build_model(FPCNN* model);
 
 
 void __init__(FPCNN* model)
@@ -39,13 +40,68 @@ void __init__(FPCNN* model)
     memcpy(params.context_offsets_spectral, context_offsets_spectral, sizeof(context_offsets_spectral));
     model->hyperparams = params;
 
-    //Validate Offsets
+    //Validate offsets
     _valideate_offsets(&model->hyperparams);
 
     //Get datetime
     time_t t = time(NULL);
     model->_logdate = *localtime(&t);
     printf("%s", asctime(&model->_logdate));
+
+    //Model instantiation
+    _build_model(model);
+
+}
+
+void _build_layer(Layer* layer, size_t size)
+{
+    Layer temp;
+
+    temp.w  = gsl_vector_calloc(size);
+    temp.dw = gsl_vector_calloc(size);
+
+    temp.b  = 0; //Needs to be Glorot Uniform initialized (i think???).
+    temp.db = 0;
+
+    temp.m_dw = 0;
+    temp.v_dw = 0;
+    temp.m_db = 0;
+    temp.v_db = 0;
+
+    layer = &temp;
+}
+
+void _build_model(FPCNN* model)
+{
+    //Need to implement Glorot Uniform initialization (what are the limits and seed)
+    model->input_spatial  = gsl_vector_calloc(12); //12 because thats the len(context_offsets_spatial). Might change idk
+    model->input_spectral = gsl_vector_calloc(4); //4 because thats the len(context_offsets_spectral). Might change idk
+
+    _build_layer(model->spatial_extraction, model->hyperparams.track_spatial_width);
+    _build_layer(model->spectral_extraction , model->hyperparams.track_spectral_width);
+    _build_layer(model->merge, model->hyperparams.track_fusion_width);
+    
+    model->output = 0; //Needs to be Glorot Uniform initialized.
+    
+    //Optimizer
+    model->Adam.learning_rate = model->hyperparams.lr;
+    model->Adam.beta_1 = 0.9;
+    model->Adam.beta_2 = 0.999;
+    model->Adam.epsilon = 1e-7;
+       
+}
+
+void _optimizer_Adam(FPCNN* model)
+{
+    //https://towardsdatascience.com/how-to-implement-an-adam-optimizer-from-scratch-76e7b217f1cc
+    //Following the above link.
+
+    //Get dw 
+    //get db
+    //run update
+    //calculate loss
+
+
 }
 
 //@staticmethod?
