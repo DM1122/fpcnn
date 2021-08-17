@@ -12,6 +12,7 @@ uint16_t* map_residuals(uint16_t* data, int data_size)
 {
     printf("map_residuals\n");
     //Assert (how do i do this in c?, ill make a helper, or maybe its already a thing)
+    //Looked it up, its already a thing (<assert.h>)
     int n = data_size;
     uint16_t* output = calloc(n, sizeof(uint16_t));
 
