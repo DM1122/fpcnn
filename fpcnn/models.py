@@ -140,6 +140,7 @@ class FPCNN:
         x = tf.keras.layers.Concatenate(axis=-1, name="Merge")(
             [track_spatial, track_spectral]
         )
+
         for i in range(self._hp["track_fusion_length"]):
             x = tf.keras.layers.Dense(
                 units=self._hp["track_fusion_width"],
@@ -375,6 +376,7 @@ class FPCNN:
         return batch_spatial, batch_spectral, batch_labels
 
     def compress(self, data):
+
         """Compress datacube using predictive encoder.
 
         Args:

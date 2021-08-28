@@ -13,7 +13,7 @@ from fpcnn.libs import benchmarklib, datalib
 
 # region paths config
 log_path = Path("logs/scripts")
-data_path = Path("data/indian_pines.mat")
+data_path = Path("../data/indian_pines.mat")
 output_path = Path("output")
 # endregion
 
@@ -65,7 +65,14 @@ data = data[0 : data_shape[0], 0 : data_shape[1], 0 : data_shape[2]]
 
 # compress
 model = models.FPCNN(hp=hyperparams, logname="compress_ip")
+
+# get initial weights and biases to encode later
+weights_biases = model.get_weights()
+
+
 data_compressed = model.compress(data=data)
+
+
 LOG.info(
     f"Data compressed ({data_compressed.shape}, {data_compressed.dtype}):\n"
     f"{data_compressed}"
@@ -73,8 +80,17 @@ LOG.info(
 
 # encode
 data_mapped = encoding.map_residuals(data_compressed)
+
+# Convert floats representing weights and biases to bit representation
+toAppend = encoding.encode_weights_biases(weights_biases)
+
 data_encoded = encoding.grc_encode(data=data_mapped, m=0)
 
+# Append weights and biases to the encoded bitstream
+data_encoded = np.append(data_encoded, toAppend)
+
+# Reciver weights and biases from encoded bit stream
+recoveredWB = encoding.decode_bitstream(data_encoded)
 
 bpc = benchmarklib.get_bpc_encoded(original=data, encoded=data_encoded)
 print(f"BPC: {bpc}")
