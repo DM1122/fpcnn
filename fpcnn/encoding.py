@@ -174,6 +174,11 @@ def decode_bitstream(stream):
         weights (list{ndarray}): List of ndarrays defining weights.
     """
     # TODO: restore origianl bitstream to be decoded back into cube
+
+    # Length of weights and biases are known before runtime (151 * 32 bits)
+    # The next 4 lines are only useful if we compress the weights and biases
+    # and don't know the numbers of bits beforehand
+
     lengthOfWB = ""
     for i in range(len(stream) - 16, len(stream)):
 

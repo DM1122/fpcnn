@@ -92,6 +92,10 @@ data_encoded = np.append(data_encoded, toAppend)
 # Reciver weights and biases from encoded bit stream
 recoveredWB = encoding.decode_bitstream(data_encoded)
 
+# Removed encoded weights & biases from bitstream to prepare bitstream for grc decoding
+data_encoded = data_encoded[:-4848].copy()
+
+
 bpc = benchmarklib.get_bpc_encoded(original=data, encoded=data_encoded)
 print(f"BPC: {bpc}")
 

@@ -2,6 +2,7 @@
 
 # stdlib
 import logging
+import random
 
 # external
 import numpy as np
@@ -67,6 +68,41 @@ def test_remap_residuals():
     LOG.info(
         f"Data remapped ({data_remapped.shape}, {data_remapped.dtype}):\n"
         f"{data_remapped}"
+    )
+
+
+def test_encode_weights_biases():
+    """Test for encoding weights and biases."""
+    # pylint: disable=no-member
+    weights_biases = []
+    i = 0
+    while i < random.randint(1, 10):
+        weights_biases.append(
+            np.random.rand(random.randint(1, 5), random.randint(1, 15))
+        )
+        i += 1
+    LOG.info(
+        f"Data (Number of np arrays: {len(weights_biases)}, {weights_biases[0].dtype}):\n{weights_biases}"  # pylint: disable=line-too-long
+    )
+
+    LOG.info("Encoding")
+    data_encoded = encoding.encode_weights_biases(weights_biases)
+    LOG.info(
+        f"Encoded weights & biases ({data_encoded.shape}, {data_encoded.dtype}, Number of bits: {len(data_encoded)}):\n{data_encoded}"  # pylint: disable=line-too-long
+    )
+
+
+def test_decode_bitstream():
+    """Test for decoding weights and biases."""
+
+    rng = np.random.default_rng()
+    data = rng.integers(low=0, high=2, size=128229198)
+    LOG.info(f"Data ({data.shape}, {data.dtype}):\n{data}")
+
+    LOG.info("Decoding")
+    data_decoded = encoding.decode_bitstream(data)
+    LOG.info(
+        f"Data decoded ({len(data_decoded)}, {data_decoded[0].dtype}):\n{data_decoded}"
     )
 
 
