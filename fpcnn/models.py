@@ -727,3 +727,8 @@ class FPCNN:
             weights (list{ndarray}): List of ndarrays defining weights
         """
         self._model.set_weights(weights)
+
+    def print_model_legacy(self):
+        """Print model architecture visualization."""
+        self.model.summary()
+        tf.keras.utils.plot_model(self.model, "fpcnn.png", show_shapes=True)
