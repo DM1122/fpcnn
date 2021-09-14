@@ -63,11 +63,11 @@ LOG.info(f"Loading data from '{data_path}'")
 data = datalib.load_data_hdf5(path=data_path, header=data_header)
 data = data[0 : data_shape[0], 0 : data_shape[1], 0 : data_shape[2]]
 
-# compress
+# instantiate compressor model
 model = models.FPCNN(hp=hyperparams, logname="compress_ip")
 
 # get initial weights and biases to encode later
-weights_biases = model.get_weights()
+weights = model.get_weights()
 
 
 data_compressed = model.compress(data=data)
@@ -78,22 +78,22 @@ LOG.info(
     f"{data_compressed}"
 )
 
-# encode
+# mapping
 data_mapped = encoding.map_residuals(data_compressed)
 
 # Convert floats representing weights and biases to bit representation
-toAppend = encoding.encode_weights_biases(weights_biases)
+toAppend = encoding.encode_weights_biases(weights)
 
 data_encoded = encoding.grc_encode(data=data_mapped, m=0)
 
 # Append weights and biases to the encoded bitstream
 data_encoded = np.append(data_encoded, toAppend)
 
-# Reciver weights and biases from encoded bit stream
+# Separate weights and biases from encoded bit stream
 recoveredWB = encoding.decode_bitstream(data_encoded)
 
 # Removed encoded weights & biases from bitstream to prepare bitstream for grc decoding
-data_encoded = data_encoded[:-4848].copy()
+data_encoded = data_encoded[:-4848].copy()  # TODO: remove hardcodeded value
 
 
 bpc = benchmarklib.get_bpc_encoded(original=data, encoded=data_encoded)

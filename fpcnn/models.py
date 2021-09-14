@@ -649,6 +649,67 @@ class FPCNN:
 
         return output
 
+    def decompress_legacy(self, data):
+        """Decode residuals using legacy non-batching approach.
+        Args:
+            data (numpy.ndarray): array of residuals
+        Returns:
+            output (ndarray): reconstruction of original datacube
+        """
+        output = np.zeros(shape=data.shape, dtype="uint16", order="C")
+        losses = []
+
+        for k in range(data.shape[2]):
+            for j in range(data.shape[1]):
+                for i in range(data.shape[0]):
+                    index = (i, j, k)
+
+                    # get error
+                    error = data[index].item()
+
+                    # get context
+                    context_spatial = self._get_context(
+                        data=output,
+                        index=index,
+                        offsets=self._hp["context_offsets_spatial"],
+                    )
+                    context_spectral = self._get_context(
+                        data=output,
+                        index=index,
+                        offsets=self._hp["context_offsets_spectral"],
+                    )
+
+                    with tf.GradientTape() as tape:
+                        # get prediction
+                        pred = self._model(
+                            {
+                                "Spatial_Context": context_spatial,
+                                "Spectral_Context": context_spectral,
+                            }
+                        )
+                        pred_rounded = round(pred.numpy().item())
+
+                        # get label
+                        label = pred_rounded + error
+
+                        # get loss
+                        loss = self._losser(y_true=label, y_pred=pred)
+
+                    output[index] = label
+                    losses.append(loss.numpy().item())
+
+                    # compute gradients and update weights
+                    grads = tape.gradient(loss, self._model.trainable_variables)
+                    self._optimizer.apply_gradients(
+                        grads_and_vars=zip(grads, self._model.trainable_variables),
+                        name=None,
+                        experimental_aggregate_gradients=True,
+                    )
+
+        losses = np.array(losses)
+
+        return output
+
     def get_weights(self):
         """Get model weights.
 

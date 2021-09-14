@@ -223,7 +223,7 @@ class Tuner_IP(Tuner):
         data_mapped = encoding.map_residuals(data_compressed.flatten())
         data_encoded = encoding.grc_encode(data=data_mapped, m=params[7])
 
-        loss = benchmarklib.get_bpc_bitstream(a=data_encoded, size=data.size)
+        loss = benchmarklib.get_bpc_encoded(original=data, encoded=data_encoded)
 
         return loss
 
