@@ -118,7 +118,7 @@ isort . & black . & pylint_runner
 To improve the organization of this repository and reduce conflicts, branches will be organized as follow:
 1. `main` - the branch containing the most recent working release. All code in this branch should run perfectly without any errors.
 2. `dev` - branched off of `main`; the most updated version of the project with the newest features and bug fixes.
-3. `features/<feature-name>` - branched off of `dev`; a feature branch. **Features must be tested thoroughly before being merged into **`dev`
+3. `features/<feature-name>` - branched off of `dev`; a feature branch. **Features must be tested thoroughly before being merged into dev**
 
 For more information check out: https://gist.github.com/digitaljhelms/4287848
 
