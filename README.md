@@ -113,7 +113,29 @@ Pre-commit will run the hooks on commit, but when a hook fails, they can be run 
 ```
 isort . & black . & pylint_runner
 ```
-### test test
+
+# Workflow Structure
+To improve the organization of this repository and reduce conflicts, branches will be organized as follow:
+1. `main` - the branch containing the most recent working release. All code in this branch should run perfectly without any errors.
+2. `dev` - branched off of `main`; the most updated version of the project with the newest features and bug fixes.
+3. `features/<feature-name>` - branched off of `dev`; a feature branch. **Features must be tested thoroughly before being merged into **`dev`
+
+For more information check out: https://gist.github.com/digitaljhelms/4287848
+
+## Creating issues:
+You can create a new task as follows:
+1. Navigate to the "Projects" tab
+2. Create a new task in the "To Do" column
+3. Click on the three dots in the top right corner of the card and select "Convert to issue"
+4. \[Optional\] Assign yourself or somebody else to the issue
+5. \[Optional\] Add the issue to a milestone (useful for breaking a large task into smaller tickets)
+
+## Taking on Tickets:
+1. Select your issue (either on Projects board or through the "Issues" tab)
+2. Change the status of the issue to "In Progress" (either slide the card to the "In Progress" column in the Projects board, or change the status on the issue's page)
+3. Create a new branch of the form `features/<feature-name>`, do some ✨ m a g i c ✨, and create a Pull Request
+4. Request a teammate for code review, and link your PR to its respective issue
+5. If all goes well, merge it in :D
 
 
 
