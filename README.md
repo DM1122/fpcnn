@@ -133,7 +133,7 @@ You can create a new task as follows:
 ## Taking on Tickets:
 1. Select your issue (either on Projects board or through the "Issues" tab)
 2. Change the status of the issue to "In Progress" (either slide the card to the "In Progress" column in the Projects board, or change the status on the issue's page)
-3. Create a new branch of the form `features/<feature-name>`, do some ✨ m a g i c ✨, and create a Pull Request
+3. Create a new branch of the form `features/<feature-name>`, do some ✨ m a g i c ✨, and create a Pull Request (**make sure you assign our Project board to the PR**)
 4. Request a teammate for code review, and link your PR to its respective issue
 5. If all goes well, merge it in :D
 
