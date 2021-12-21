@@ -147,13 +147,13 @@ class Tuner:
         raise NotImplementedError("Method must be implemented in derived classes.")
 
 
-class Tuner_IP(Tuner):
-    """A tuner for FPCNN on the Indian Pines dataset."""
+class Tuner_FPCNN(Tuner):
+    """A tuner for FPCNN on Indian pines."""
 
     def __init__(self):
         super().__init__()
 
-        self.space = [
+        self._space = [
             skopt.space.space.Categorical(
                 categories=[1, 4, 8, 16, 32, 64, 128, 256],
                 transform="identity",
@@ -197,12 +197,11 @@ class Tuner_IP(Tuner):
         ]
 
     def _get_data(self, params):
+        LOG.debug("Getting data")
+
         data = datalib.load_data_hdf5(
             path="data/indian_pines.mat", header="indian_pines"
         )
-        LOG.info(f"Original data ({data.shape}, {data.dtype}):\n{data}")
-        data = data[0:8, 0:8, 0:8]
-        LOG.info(f"Cropped data ({data.shape}, {data.dtype}):\n{data}")
 
         return data
 
@@ -220,7 +219,7 @@ class Tuner_IP(Tuner):
         model = self._build_model(params)
 
         data_compressed = model.compress(data)
-        data_mapped = encoding.map_residuals(data_compressed.flatten())
+        data_mapped = encoding.map_residuals(data_compressed)
         data_encoded = encoding.grc_encode(data=data_mapped, m=params[7])
 
         loss = benchmarklib.get_bpc_encoded(original=data, encoded=data_encoded)
@@ -228,6 +227,7 @@ class Tuner_IP(Tuner):
         return loss
 
     def _build_model(self, params):
+        LOG.debug("Building model")
         model = models.FPCNN(
             hp={
                 "track_spatial_length": int(params[0]),
@@ -272,6 +272,7 @@ class Tuner_IP(Tuner):
             params (list): list of evaluated hyperparameters.
             loss (torch.Tensor): Final test loss output.
         """
+        LOG.debug("Recording hyperparameters")
         writer.add_hparams(
             hparam_dict={
                 "track_spatial_length": int(params[0]),
@@ -282,5 +283,102 @@ class Tuner_IP(Tuner):
                 "track_fusion_width": int(params[5]),
                 "lr": int(params[6]),
             },
+            metric_dict={"Metric/bpc": float(loss)},
+        )
+
+
+class Tuner_FPCNN_GRC(Tuner):
+    """Tuner for tuning the GRC parameter in FPCNN."""
+
+    def __init__(self):
+        super().__init__()
+
+        self._space = [
+            skopt.space.space.Integer(
+                low=0,
+                high=32,
+                name="grc_m",
+            ),
+        ]
+
+    def _get_data(self, params):
+        LOG.debug("Getting data")
+
+        data = datalib.load_data_hdf5(
+            path="data/indian_pines.mat", header="indian_pines"
+        )
+
+        return data
+
+    def _blackbox(self, params):
+        """The blackbox function to be optimized.
+        Args:
+            params (list): A list of hyperparameters to be evaluated in the current
+                call to the blackbox function.
+
+        Returns:
+            float: Function loss.
+        """
+
+        data = self._get_data(params)
+        model = self._build_model(params)
+
+        data_compressed = model.compress(data)
+        data_mapped = encoding.map_residuals(data_compressed)
+        data_encoded = encoding.grc_encode(data=data_mapped, m=params[0])
+
+        loss = benchmarklib.get_bpc_encoded(original=data, encoded=data_encoded)
+
+        return loss
+
+    def _build_model(self, params):
+        LOG.debug("Building model")
+        model = models.FPCNN(
+            hp={
+                "track_spatial_length": 1,
+                "track_spatial_width": 5,
+                "track_spectral_length": 1,
+                "track_spectral_width": 5,
+                "track_fusion_length": 1,
+                "track_fusion_width": 5,
+                "lr": 0.01,
+                "context_offsets_spatial": [
+                    (-1, 0, 0),
+                    (-1, -1, 0),
+                    (0, -1, 0),
+                    (1, -1, 0),
+                    (-1, 0, -1),
+                    (-1, -1, -1),
+                    (0, -1, -1),
+                    (1, -1, -1),
+                    (-1, 0, -2),
+                    (-1, -1, -2),
+                    (0, -1, -2),
+                    (1, -1, -2),
+                ],
+                "context_offsets_spectral": [
+                    (0, 0, -1),
+                    (0, 0, -2),
+                    (0, 0, -3),
+                    (0, 0, -4),
+                ],
+            },
+            logname="tuning_ip",
+        )
+
+        return model
+
+    def _record_hparams(self, writer, params, loss):
+        """Records the current hyperparameters along with metrics to the Tensorboard
+            writer.
+
+        Args:
+            writer (SummaryWriter): The tensorboard writer provided by the Trainer.
+            params (list): list of evaluated hyperparameters.
+            loss (torch.Tensor): Final test loss output.
+        """
+        LOG.debug("Recording hyperparameters")
+        writer.add_hparams(
+            hparam_dict={"grc": int(params[0])},
             metric_dict={"Metric/bpc": float(loss)},
         )

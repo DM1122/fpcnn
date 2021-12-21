@@ -48,3 +48,6 @@ def print_ndarray_stats(array, title=""):
         print(f"{array[:5]}...{array[-5:]}")
 
     print()
+
+
+# function that takes in numpy array and performs goulomb rice encoding
